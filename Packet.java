@@ -39,4 +39,10 @@ public class Packet<T> implements Serializable
             throw new ClassCastException("CANNOT PARSE RESPONSE FROM PACKET");
         }
     }
+
+    @Override
+    public String toString()
+    {
+        return getPacket().toString();
+    }
 }

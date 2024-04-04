@@ -1,44 +1,50 @@
 import java.net.ServerSocket;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server
 {
     private static final String SERVER_IP = "localhost";
-    private static final int SERVER_PORT = 30000;
+    private static final int SERVER_PORT = 25565;
+    private static final String CLIENT_IP = "localhost";
+    private static final int CLIENT_PORT = 25566;
     private static final int NUM_THREADS = 4;
-    private static Command currentCommand = new Command("STARTUP");
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException
+    public static void main(String[] args)
     {
-        System.out.println("Starting up server...");
-        Thread.sleep(2000);
-
-        TaskManager taskManager = new TaskManager(Executors.newFixedThreadPool(NUM_THREADS),currentCommand);
-
-        ExecutorService executor = taskManager.getExecutor();
-
-        //ACTIVE THREAD
-        executor.submit(new TaskManager.OpenStatusListener());
-
-        ServerSocket listenSocket = executor.submit(new TaskManager.OpenServerSocket(SERVER_PORT)).get();
-
-        //ACTIVE THREAD
-        executor.submit(new TaskManager.ListenForConnections(listenSocket));
-
-        Scanner scanner = new Scanner(System.in);
-        while(!listenSocket.isClosed())
+        try
         {
-            setCurrentCommand(scanner);
+            System.out.println("STARTING UP SERVER...");
+            Thread.sleep(2000);
+
+            //NEED TO MAKE INSTANCE OF TASKMANAGER BEFORE ACCESSING ITS STATIC RUNNABLE/CALLABLE CLASSES
+            new TaskManager(Executors.newFixedThreadPool(NUM_THREADS),new Command("STARTUP"));
+
+            //ACTIVE THREAD
+            TaskManager.executor.submit(new TaskManager.OpenStatusListener());
+
+            ServerSocket listenSocket = TaskManager.executor.submit(new TaskManager.OpenServerSocket(SERVER_PORT)).get();
+
+            //ACTIVE THREAD
+            TaskManager.executor.submit(new TaskManager.ListenForConnections(listenSocket));
+
+
+            Scanner scanner = new Scanner(System.in);
+            while(!listenSocket.isClosed())
+            {
+                System.out.println("CURRENT COMMAND: " + TaskManager.currentCommand.getArgument(0));
+                setCurrentCommand(scanner);
+            }
+            System.out.println("CONNECTION CLOSED. EXITING THE PROGRAM.");
+            scanner.close();
+            TaskManager.executor.close();
+            TaskManager.currentCommand = new Command("QUIT SERVER");
         }
-        scanner.close();
-        executor.close();
-        System.out.println("Listen channel closed. Exiting the program.");
-        System.exit(0);
-        //INITIATE SAFE SHUTDOWN
-        //WAIT FOR PROCESSING THREADS TO STOP, THEN CLOSE ACTIVE THREADS
+        catch(Exception exception)
+        {
+            System.err.println("EXCEPTION IN THREAD: " + Thread.currentThread().getName());
+            exception.printStackTrace();
+        }
     }
     public static String getServerIp()
     {
@@ -48,45 +54,51 @@ public class Server
     {
         return SERVER_PORT;
     }
+    public static String getClientIp()
+    {
+        return CLIENT_IP;
+    }
+    public static int getClientPort()
+    {
+        return CLIENT_PORT;
+    }
     public static int getNumThreads()
     {
         return NUM_THREADS;
     }
     public static Command getCurrentCommand()
     {
-        return currentCommand;
+        return TaskManager.currentCommand;
     }
 
     public static void setCurrentCommand(Scanner scanner)
     {
         do
         {
-            System.out.println("\nEnter a command: ");
+            System.out.println("\nENTER A COMMAND: ");
             switch(scanner.nextLine().toUpperCase())
             {
                 case "STARTUP":
                     break;
 
                 case "QUIT CLIENT":
-                    System.out.println("\nShutting down client...");
-                    currentCommand = new Command("QUIT CLIENT");
+                    TaskManager.currentCommand = new Command("QUIT CLIENT");
                     break;
 
                 case "QUIT SERVER":
-                    System.out.println("\nShutting down server...");
-                    currentCommand = new Command("QUIT SERVER");
+                    TaskManager.currentCommand = new Command("QUIT SERVER");
                     break;
 
                 case "FORCE QUIT":
-                    currentCommand = new Command("FORCE QUIT");
+                    TaskManager.currentCommand = new Command("FORCE QUIT");
                     break;
 
                 default:
-                    System.out.println("\nINVALID COMMAND\nVALID COMMANDS: \"LIST\" \"DELETE\" \"RENAME\" \"DOWNLOAD\" \"UPLOAD\" \"QUIT CLIENT\" OR \"QUIT SERVER\"");
-                    currentCommand = new Command("INVALID");
+                    System.out.println("\nVALID COMMANDS: \"QUIT CLIENT\" \"QUIT SERVER\" OR \"FORCE QUIT\"");
+                    TaskManager.currentCommand = new Command("INVALID");
                     break;
             }
         }
-        while(currentCommand.equals("INVALID"));
+        while(TaskManager.currentCommand.equals("INVALID"));
     }
 }

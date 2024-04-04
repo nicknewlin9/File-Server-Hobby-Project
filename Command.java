@@ -1,8 +1,9 @@
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Command
+public class Command implements Serializable
 {
     private final List<String> args = new LinkedList<>();
     public Command(String...args)

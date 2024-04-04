@@ -1,42 +1,53 @@
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Client
 {
     private static final String SERVER_IP = "localhost";
-    private static final int SERVER_PORT = 30000;
+    private static final int SERVER_PORT = 25565;
+    private static final String CLIENT_IP = "localhost";
+    private static final int CLIENT_PORT = 25566;
     private static final int NUM_THREADS = 4;
-    private static Command currentCommand = new Command("STARTUP");
 
-    public static void main(String[] args) throws ExecutionException, InterruptedException
+    public static void main(String[] args)
     {
-        System.out.println("Starting up client...");
-        Thread.sleep(2000);
-
-        TaskManager taskManager = new TaskManager(Executors.newFixedThreadPool(NUM_THREADS),currentCommand);
-
-        ExecutorService executor = taskManager.getExecutor();
-
-        //ACTIVE THREAD
-        executor.submit(new TaskManager.OpenStatusListener());
-
-        Socket connectedSocket = executor.submit(new TaskManager.ConnectToHost(SERVER_IP,SERVER_PORT)).get();
-
-        Scanner scanner = new Scanner(System.in);
-        while(connectedSocket.isConnected())
+        try
         {
-            setCurrentCommand(scanner);
-            executor.submit(new TaskManager.SubmitRequest(connectedSocket,currentCommand));
+            System.out.println("STARTING UP CLIENT...");
+            Thread.sleep(2000);
+
+            //NEED TO MAKE INSTANCE OF TASKMANAGER BEFORE ACCESSING ITS STATIC RUNNABLE/CALLABLE CLASSES
+            new TaskManager(Executors.newFixedThreadPool(NUM_THREADS),new Command("STARTUP"));
+
+            //ACTIVE THREAD
+            TaskManager.executor.submit(new TaskManager.OpenStatusListener());
+
+            ServerSocket listenSocket = TaskManager.executor.submit(new TaskManager.OpenServerSocket(CLIENT_PORT)).get();
+
+            //ACTIVE THREAD
+            TaskManager.executor.submit(new TaskManager.ListenForConnections(listenSocket));
+
+            Socket serverConnection = TaskManager.executor.submit(new TaskManager.ConnectToHost(SERVER_IP,SERVER_PORT)).get();
+
+            Scanner scanner = new Scanner(System.in);
+            while(serverConnection.isConnected() && !listenSocket.isClosed())
+            {
+                System.out.println("CURRENT COMMAND: " + TaskManager.currentCommand.getArgument(0));
+                setCurrentCommand(scanner);
+                TaskManager.executor.submit(new TaskManager.SubmitRequest(serverConnection,TaskManager.currentCommand));
+            }
+            System.out.println("CONNECTION IS CLOSED. EXITING THE PROGRAM.");
+            scanner.close();
+            TaskManager.executor.close();
+            TaskManager.currentCommand = new Command("QUIT CLIENT");
         }
-        scanner.close();
-        executor.close();
-        System.out.println("Connection closed. Exiting the program.");
-        System.exit(0);
-        //INITIATE SAFE SHUTDOWN
-        //WAIT FOR PROCESSING THREADS TO STOP, THEN CLOSE ACTIVE THREADS
+        catch(Exception exception)
+        {
+            System.err.println("EXCEPTION IN THREAD: " + Thread.currentThread().getName());
+            exception.printStackTrace();
+        }
     }
     public static String getServerIp()
     {
@@ -46,74 +57,80 @@ public class Client
     {
         return SERVER_PORT;
     }
+    public static String getClientIp()
+    {
+        return CLIENT_IP;
+    }
+    public static int getClientPort()
+    {
+        return CLIENT_PORT;
+    }
     public static int getNumThreads()
     {
         return NUM_THREADS;
     }
     public static Command getCurrentCommand()
     {
-        return currentCommand;
+        return TaskManager.currentCommand;
     }
     public static void setCurrentCommand(Scanner scanner)
     {
         do
         {
-            System.out.println("\nEnter a command: ");
+            System.out.println("\nENTER A COMMAND: ");
             switch(scanner.nextLine().toUpperCase())
             {
                 case "STARTUP":
                     break;
 
                 case "LIST":
-                    currentCommand = new Command("LIST");
+                    TaskManager.currentCommand = new Command("LIST");
                     break;
 
                 case "DELETE":
-                    System.out.println("Type name of file to delete: ");
+                    System.out.println("TYPE FILENAME TO DELETE: ");
                     String filenameToDelete = scanner.nextLine();
-                    currentCommand = new Command("DELETE",filenameToDelete);
+                    TaskManager.currentCommand = new Command("DELETE",filenameToDelete);
                     break;
 
                 case "RENAME":
-                    System.out.println("Type name of file to rename: ");
+                    System.out.println("TYPE FILENAME TO RENAME: ");
                     String filenameToRename = scanner.nextLine();
-                    System.out.println("Type new file name: ");
+                    System.out.println("TYPE NEW FILENAME: ");
                     String newFilename = scanner.nextLine();
-                    currentCommand = new Command("RENAME",filenameToRename,newFilename);
+                    TaskManager.currentCommand = new Command("RENAME",filenameToRename,newFilename);
                     break;
 
                 case "DOWNLOAD":
-                    System.out.println("Type name of file to download: ");
+                    System.out.println("TYPE FILENAME TO DOWNLOAD: ");
                     String filenameToDownload = scanner.nextLine();
-                    currentCommand = new Command("DOWNLOAD",filenameToDownload);
+                    TaskManager.currentCommand = new Command("DOWNLOAD",filenameToDownload);
                     break;
 
                 case "UPLOAD":
-                    System.out.println("Type name of file to upload: ");
+                    System.out.println("TYPE FILENAME TO UPLOAD: ");
                     String filenameToUpload = scanner.nextLine();
-                    currentCommand = new Command("UPLOAD",filenameToUpload);
+                    TaskManager.currentCommand = new Command("UPLOAD",filenameToUpload);
                     break;
 
                 case "QUIT CLIENT":
-                    System.out.println("\nShutting down client...");
-                    currentCommand = new Command("QUIT CLIENT");
+                    TaskManager.currentCommand = new Command("QUIT CLIENT");
                     break;
 
                 case "QUIT SERVER":
-                    System.out.println("\nShutting down server...");
-                    currentCommand = new Command("QUIT SERVER");
+                    TaskManager.currentCommand = new Command("QUIT SERVER");
                     break;
 
                 case "FORCE QUIT":
-                    currentCommand = new Command("FORCE QUIT");
+                    TaskManager.currentCommand = new Command("FORCE QUIT");
                     break;
 
                 default:
-                    System.out.println("\nINVALID COMMAND\nVALID COMMANDS: \"LIST\" \"DELETE\" \"RENAME\" \"DOWNLOAD\" \"UPLOAD\" \"QUIT CLIENT\" OR \"QUIT SERVER\"");
-                    currentCommand = new Command("INVALID");
+                    System.out.println("\nVALID COMMANDS: \"LIST\" \"DELETE\" \"RENAME\" \"DOWNLOAD\" \"UPLOAD\" \"QUIT CLIENT\" \"QUIT SERVER\" OR \"FORCE QUIT\"");
+                    TaskManager.currentCommand = new Command("INVALID");
                     break;
             }
         }
-        while(currentCommand.equals("INVALID"));
+        while(TaskManager.currentCommand.equals("INVALID"));
     }
 }

@@ -1,15 +1,13 @@
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.*;
-import java.util.Scanner;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
-//CONTAINS RUNNABLE OR CALLABLE CLASSES TO OPERATE ON DIFFERENT THREADS
-//MUST CREATE NEW TASKMANAGER WITH AN EXECUTORSERVICE AND CURRENT COMMAND AS ARGUMENTS TO CALL ANY OF THE CLASSES
-//CLIENT AND SERVER
 public class TaskManager
 {
     public static ExecutorService executor;
@@ -36,9 +34,6 @@ public class TaskManager
         return TaskManager.currentCommand;
     }
 
-    //THIS RUNNABLE CLASS WILL OPEN A LISTENING SOCKET, THEN WAIT AND CONTINUOUSLY ACCEPT NEW CLIENT CONNECTIONS, THEN
-    //CREATE A SERVECLIENTREQUEST TASK TO SERVE EACH NEW SOCKET CONNECTION
-    //SERVER
     public static class OpenServerSocket implements Callable<ServerSocket>
     {
         private final int SERVER_PORT;
@@ -46,30 +41,23 @@ public class TaskManager
         {
             this.SERVER_PORT = port;
         }
-        public ServerSocket call() throws IOException {
-            ServerSocket listenSocket = new ServerSocket();
+        public ServerSocket call()
+        {
             try
             {
-                listenSocket = new ServerSocket(SERVER_PORT);
-                System.out.println("Hosting on:");
-                System.out.println("IP: " + Server.getServerIp());
-                System.out.println("Port: " + SERVER_PORT);
+                ServerSocket listenSocket = new ServerSocket(SERVER_PORT);
+                System.out.println("HOSTING AT IP: | " + Server.getServerIp() + " | ON PORT: | " + SERVER_PORT + " |");
+                return listenSocket;
             }
-            catch(SocketTimeoutException exception)
+            catch(Exception exception)
             {
-                System.err.println("SOCKET TIMED OUT");
+                System.err.println("EXCEPTION IN THREAD: " + "OpenServerSocket");
                 exception.printStackTrace();
-                System.exit(0);
             }
-            catch(IOException exception)
-            {
-                System.err.println("CAN'T OPEN LISTEN SOCKET AND SERVE CLIENTS");
-                exception.printStackTrace();
-                System.exit(0);
-            }
-            return listenSocket;
+            return null;
         }
     }
+
     public static class ListenForConnections implements Runnable
     {
         private final ServerSocket serverSocket;
@@ -81,26 +69,21 @@ public class TaskManager
         {
             try
             {
-                while(true)
+                while(!(currentCommand.equals("QUIT CLIENT") || currentCommand.equals("QUIT SERVER") || currentCommand.equals("FORCE QUIT")))
                 {
-                    //WAITS FOR CLIENT CONNECTIONS
                     Socket socket = serverSocket.accept();
-                    System.out.println("A client has connected.");
+                    System.out.println("A CLIENT HAS CONNECTED.");
                     executor.submit(new ServeClientRequest(socket));
                 }
             }
-            catch(IOException exception)
+            catch(Exception exception)
             {
-                System.err.println("CAN'T CONNECT TO CLIENT");
+                System.err.println("EXCEPTION IN THREAD: " + "ListenForConnections");
                 exception.printStackTrace();
-                System.exit(0);
             }
         }
     }
 
-    //THIS CALLABLE CLASS TAKES A SERVER IP AND A DESTINATION PORT TO CONNECT THE CLIENT TO THE SERVER
-    //IT RETURNS A SOCKET REPRESENTING THE CONNECTION
-    //CLIENT
     public static class ConnectToHost implements Callable<Socket>
     {
         private final String SERVER_IP;
@@ -112,36 +95,24 @@ public class TaskManager
         }
         public Socket call()
         {
-            Socket socket = new Socket();
             try
             {
+                Socket socket = new Socket();
                 InetAddress IPAddress = InetAddress.getByName(SERVER_IP);
                 InetSocketAddress socketAddress = new InetSocketAddress(IPAddress, SERVER_PORT);
                 socket.connect(socketAddress);
-                System.out.println("Connected to:");
-                System.out.println("IP: " + SERVER_IP);
-                System.out.println("Port: " + SERVER_PORT);
+                System.out.println("CONNECTED TO IP: | " + SERVER_IP + " | ON PORT: | " + SERVER_PORT + " |");
                 return socket;
             }
-            catch(UnknownHostException exception)
+            catch(Exception exception)
             {
-                System.err.println("INVALID SERVER IP");
+                System.err.println("EXCEPTION IN THREAD: " + "ConnectToHost");
                 exception.printStackTrace();
-                System.exit(0);
             }
-            catch(IOException exception)
-            {
-                System.err.println("CAN'T CONNECT TO SERVER");
-                exception.printStackTrace();
-                System.exit(0);
-            }
-            return socket;
+            return null;
         }
     }
 
-    //THIS RUNNABLE CLASS WILL WAIT TO RECEIVE A PACKET, GET THE COMMAND FROM THE PACKET, SUBMIT THE COMMAND TO THE
-    //COMMAND PROCESSOR, GET THE RESPONSE FROM THE COMMAND PROCESSOR, THEN SEND A PACKET WITH THE RESPONSE TO THE CLIENT
-    //SERVER
     public static class ServeClientRequest implements Runnable
     {
         private final Socket socket;
@@ -154,33 +125,21 @@ public class TaskManager
             try
             {
                 Packet<?> receivedPacket = executor.submit(new ReceivePacket(socket)).get();
-
                 Command receivedCommand = receivedPacket.getCommandFromPacket();
-
-                Response response = executor.submit(new ProcessCommand(receivedCommand)).get();
-
+                Response response = executor.submit(new ProcessCommandFromClient(receivedCommand)).get();
                 Packet<Response> responsePacket = new Packet<>(response);
 
-                executor.submit(new SendPacket(socket, responsePacket));
+                Socket clientConnection = TaskManager.executor.submit(new TaskManager.ConnectToHost(Client.getClientIp(),Client.getClientPort())).get();
+                executor.submit(new SendPacket(clientConnection, responsePacket));
             }
-            catch(ExecutionException exception)
+            catch(Exception exception)
             {
-                System.err.println("EXECUTION EXCEPTION IN SERVECLIENTREQUEST THREAD");
+                System.err.println("EXCEPTION IN THREAD: " + "ServeClientRequest");
                 exception.printStackTrace();
-                System.exit(0);
-            }
-            catch(InterruptedException exception)
-            {
-                System.err.println("INTERRUPTED EXCEPTION IN SERVECLIENTREQUEST THREAD");
-                exception.printStackTrace();
-                System.exit(0);
             }
         }
     }
 
-    //THIS CALLABLE CLASS WILL TAKE A COMMAND, CREATE A PACKET WITH THE COMMAND, SEND THE PACKET TO THE SERVER
-    //WAIT FOR AND ACCEPT A PACKET BACK FROM THE SERVER, THEN RETURNS THE RESPONSE FROM THAT PACKET
-    //CLIENT
     public static class SubmitRequest implements Callable<Response>
     {
         private final Socket socket;
@@ -192,30 +151,19 @@ public class TaskManager
         }
         public Response call()
         {
-            Response response = new Response(false, "COULD NOT COMPLETE REQUEST");
             try
             {
                 Packet<Command> commandPacket = new Packet<>(command);
-
                 executor.submit(new SendPacket(socket,commandPacket));
-
                 Packet<?> receivedPacket = executor.submit(new ReceivePacket(socket)).get();
-
-                response = receivedPacket.getResponseFromPacket();
+                return receivedPacket.getResponseFromPacket();
             }
-            catch(ExecutionException exception)
+            catch(Exception exception)
             {
-                System.err.println("EXECUTION EXCEPTION");
+                System.err.println("EXCEPTION IN THREAD: " + "SubmitRequest");
                 exception.printStackTrace();
-                System.exit(0);
             }
-            catch(InterruptedException exception)
-            {
-                System.err.println("INTERRUPTED EXCEPTION");
-                exception.printStackTrace();
-                System.exit(0);
-            }
-            return response;
+            return null;
         }
     }
 
@@ -234,12 +182,12 @@ public class TaskManager
             {
                 ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 objectOutputStream.writeObject(packet);
+                System.out.println("SENT PACKET: " + packet);
             }
-            catch(IOException exception)
+            catch(Exception exception)
             {
-                System.err.println("CAN'T SEND PACKET TO SERVER");
+                System.err.println("EXCEPTION IN THREAD: " + "SendPacket");
                 exception.printStackTrace();
-                System.exit(0);
             }
         }
     }
@@ -256,36 +204,36 @@ public class TaskManager
             try
             {
                 ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-                return (Packet<?>) objectInputStream.readObject();
+                Packet<?> receivedPacket = (Packet<?>) objectInputStream.readObject();
+                System.out.println("RECEIVED PACKET: " + receivedPacket);
+                return receivedPacket;
             }
-            catch(IOException exception)
+            catch(Exception exception)
             {
-                System.err.println("CAN'T GET RESPONSE FROM SERVER");
+                System.err.println("EXCEPTION IN THREAD: " + "ReceivePacket");
                 exception.printStackTrace();
-                System.exit(0);
             }
-            catch(ClassNotFoundException exception)
-            {
-                System.err.println("RESPONSE FROM SERVER INVALID");
-                exception.printStackTrace();
-                System.exit(0);
-            }
-            return new Packet<>(null);
+            return null;
         }
     }
+
     public static class List implements Callable<Response>
     {
-        public List()
-        {
-
-        }
         public Response call()
         {
-            //DO THINGS
-            //GENERATE AND RETURN RESPONSE
-            return new Response(true,"SERVER RECEIVED LIST COMMAND");
+            try
+            {
+                return new Response(true,"SERVER RECEIVED LIST COMMAND");
+            }
+            catch(Exception exception)
+            {
+                System.err.println("EXCEPTION IN THREAD: " + "List");
+                exception.printStackTrace();
+            }
+            return null;
         }
     }
+
     public static class Delete implements Callable<Response>
     {
         private final String filenameToDelete;
@@ -295,11 +243,19 @@ public class TaskManager
         }
         public Response call()
         {
-            //DO THINGS
-            //GENERATE AND RETURN RESPONSE
-            return new Response(true,"SERVER RECEIVED DELETE COMMAND");
+            try
+            {
+                return new Response(true,"SERVER RECEIVED DELETE COMMAND");
+            }
+            catch(Exception exception)
+            {
+                System.err.println("EXCEPTION IN THREAD: " + "Delete");
+                exception.printStackTrace();
+            }
+            return null;
         }
     }
+
     public static class Rename implements Callable<Response>
     {
         private final String filenameToRename;
@@ -311,11 +267,19 @@ public class TaskManager
         }
         public Response call()
         {
-            //DO THINGS
-            //GENERATE AND RETURN RESPONSE
-            return new Response(true,"SERVER RECEIVED RENAME COMMAND");
+            try
+            {
+                return new Response(true,"SERVER RECEIVED RENAME COMMAND");
+            }
+            catch(Exception exception)
+            {
+                System.err.println("EXCEPTION IN THREAD: " + "Rename");
+                exception.printStackTrace();
+            }
+            return null;
         }
     }
+
     public static class Download implements Callable<Response>
     {
         private final String filenameToDownload;
@@ -325,11 +289,19 @@ public class TaskManager
         }
         public Response call()
         {
-            //DO THINGS
-            //GENERATE AND RETURN RESPONSE
-            return new Response(true,"SERVER RECEIVED DOWNLOAD COMMAND");
+            try
+            {
+                return new Response(true,"SERVER RECEIVED DOWNLOAD COMMAND");
+            }
+            catch(Exception exception)
+            {
+                System.err.println("EXCEPTION IN THREAD: " + "Download");
+                exception.printStackTrace();
+            }
+            return null;
         }
     }
+
     public static class Upload implements Callable<Response>
     {
         private final String filenameToUpload;
@@ -339,177 +311,116 @@ public class TaskManager
         }
         public Response call()
         {
-            //DO THINGS
-            //GENERATE AND RETURN RESPONSE
-            return new Response(true,"SERVER RECEIVED UPLOAD COMMAND");
+            try
+            {
+                return new Response(true,"SERVER RECEIVED UPLOAD COMMAND");
+            }
+            catch(Exception exception)
+            {
+                System.err.println("EXCEPTION IN THREAD: " + "Upload");
+                exception.printStackTrace();
+            }
+            return null;
         }
     }
 
-    //THIS CALLABLE CLASS TAKES A COMMAND, THEN CREATES AND SUBMITS THE TASK TO THE TASK MANAGER
-    //IT THEN RETURNS THE RESPONSE FROM THAT TASK
-    //SERVER
-    public static class ProcessCommand implements Callable<Response>
+    public static class ProcessCommandFromClient implements Callable<Response>
     {
         private final Command command;
-        public ProcessCommand(Command command)
+        public ProcessCommandFromClient(Command command)
         {
             this.command = command;
         }
-        public Response call() throws ExecutionException, InterruptedException
+        public Response call()
         {
-            Response response = new Response(false, "COULD NOT COMPLETE REQUEST");
-            switch(command.getArgument(0))
+            try
             {
-                //WAITS IN CASE BLOCKS FOR RESPONSE
-                case "LIST":
-                    return executor.submit(new List()).get();
-
-                case "DELETE":
-                    String filenameToDelete = command.getArgument(1);
-                    return executor.submit(new Delete(filenameToDelete)).get();
-
-                case "RENAME":
-                    String filenameToRename = command.getArgument(1);
-                    String newFilename = command.getArgument(2);
-                    return executor.submit(new Rename(filenameToRename,newFilename)).get();
-
-                case "DOWNLOAD":
-                    String filenameToDownload = command.getArgument(1);
-                    return executor.submit(new Download(filenameToDownload)).get();
-
-                case "UPLOAD":
-                    String filenameToUpload = command.getArgument(1);
-                    return executor.submit(new Upload(filenameToUpload)).get();
-
-                case "QUIT CLIENT":
-                    currentCommand = new Command("QUIT CLIENT");
-                    break;
-
-                case "QUIT SERVER":
-                    currentCommand = new Command("QUIT SERVER");
-                    break;
-
-                case "FORCE QUIT":
-                    currentCommand = new Command("FORCE QUIT");
-                    break;
-
-                default:
-                    return new Response(false, "COULD NOT COMPLETE REQUEST");
-            }
-            return response;
-        }
-    }
-
-    //THIS CALLABLE CLASS WILL OPEN A SCANNER, PROMPT USER FOR A COMMAND, WAIT FOR USER INPUT
-    //CONSTRUCT A VALID COMMAND, THEN RETURN THE COMMAND
-    //COULD MAKE THIS DIFFERENT FOR CLIENT VS SERVER
-    //CLIENT AND SERVER
-    public static class SetCurrentCommand implements Runnable
-    {
-        public SetCurrentCommand()
-        {
-
-        }
-        public void run()
-        {
-            Scanner scanner = new Scanner(System.in);
-            do
-            {
-                System.out.println("\nEnter a command: ");
-                switch(scanner.nextLine().toUpperCase())
+                switch(command.getArgument(0))
                 {
-                    case "STARTUP":
-                        break;
-
                     case "LIST":
-                        currentCommand = new Command("LIST");
-                        break;
-
+                        return executor.submit(new List()).get();
                     case "DELETE":
-                        System.out.println("Type name of file to delete: ");
-                        String filenameToDelete = scanner.nextLine();
-                        currentCommand = new Command("DELETE",filenameToDelete);
-                        break;
-
+                        String filenameToDelete = command.getArgument(1);
+                        return executor.submit(new Delete(filenameToDelete)).get();
                     case "RENAME":
-                        System.out.println("Type name of file to rename: ");
-                        String filenameToRename = scanner.nextLine();
-                        System.out.println("Type new file name: ");
-                        String newFilename = scanner.nextLine();
-                        currentCommand = new Command("RENAME",filenameToRename,newFilename);
-                        break;
-
+                        String filenameToRename = command.getArgument(1);
+                        String newFilename = command.getArgument(2);
+                        return executor.submit(new Rename(filenameToRename,newFilename)).get();
                     case "DOWNLOAD":
-                        System.out.println("Type name of file to download: ");
-                        String filenameToDownload = scanner.nextLine();
-                        currentCommand = new Command("DOWNLOAD",filenameToDownload);
-                        break;
-
+                        String filenameToDownload = command.getArgument(1);
+                        return executor.submit(new Download(filenameToDownload)).get();
                     case "UPLOAD":
-                        System.out.println("Type name of file to upload: ");
-                        String filenameToUpload = scanner.nextLine();
-                        currentCommand = new Command("UPLOAD",filenameToUpload);
-                        break;
-
+                        String filenameToUpload = command.getArgument(1);
+                        return executor.submit(new Upload(filenameToUpload)).get();
                     case "QUIT CLIENT":
-                        System.out.println("\nShutting down client...");
                         currentCommand = new Command("QUIT CLIENT");
                         break;
-
                     case "QUIT SERVER":
-                        System.out.println("\nShutting down server...");
                         currentCommand = new Command("QUIT SERVER");
                         break;
-
                     case "FORCE QUIT":
                         currentCommand = new Command("FORCE QUIT");
                         break;
-
                     default:
-                        System.out.println("\nINVALID COMMAND\nVALID COMMANDS: \"LIST\" \"DELETE\" \"RENAME\" \"DOWNLOAD\" \"UPLOAD\" \"QUIT CLIENT\" OR \"QUIT SERVER\"");
-                        currentCommand = new Command("INVALID");
-                        break;
+                        return new Response(false, "COULD NOT COMPLETE REQUEST");
                 }
             }
-            while(currentCommand.equals("INVALID"));
-            //scanner.close();
+            catch(Exception exception)
+            {
+                System.err.println("EXCEPTION IN THREAD: " + "ProcessCommandFromClient");
+                exception.printStackTrace();
+            }
+            return null;
         }
     }
 
-    //THIS RUNNABLE CLASS CHECKS THE CURRENT COMMAND EVERY 1 SECOND AND INITIATES SHUTDOWN IF NECESSARY
-    //CLIENT AND SERVER
     public static class OpenStatusListener implements Runnable
     {
-        public OpenStatusListener()
-        {
-
-        }
         public void run()
         {
-            while(!(currentCommand.equals("QUIT CLIENT") || currentCommand.equals("QUIT SERVER") || currentCommand.equals("FORCE QUIT")))
+            try
             {
-                try
+                while(!(currentCommand.equals("QUIT CLIENT") || currentCommand.equals("QUIT SERVER") || currentCommand.equals("FORCE QUIT")))
                 {
                     Thread.sleep(1000);
                 }
-                catch(InterruptedException exception)
+                switch(currentCommand.getArgument(0))
                 {
-                    System.err.println("STATUS LISTENER THREAD INTERRUPTED");
-                    exception.printStackTrace();
-                    System.exit(0);
+                    case "QUIT CLIENT":
+                        System.out.println("SHUTTING DOWN CLIENT...");
+                        System.out.println("WAITING FOR TASKS TO COMPLETE...");
+                        //CHECK IF BEING CALLED FROM CLIENT, THEN TRY TO STOP ACTIVE THREADS
+                        if(!executor.awaitTermination(10, TimeUnit.SECONDS))
+                        {
+                            Thread.currentThread().interrupt();
+                            System.out.println("COULD NOT SAFELY SHUTDOWN CLIENT.");
+                            System.err.println("FORCE QUITTING...");
+                            System.exit(1);
+                        }
+                        break;
+                    case "QUIT SERVER":
+                        System.out.println("SHUTTING DOWN SERVER...");
+                        System.out.println("WAITING FOR TASKS TO COMPLETE...");
+                        //CHECK IF BEING CALLED FROM SERVER, THEN TRY TO STOP ACTIVE THREADS
+                        if(!executor.awaitTermination(10, TimeUnit.SECONDS))
+                        {
+                            Thread.currentThread().interrupt();
+                            System.out.println("COULD NOT SAFELY SHUTDOWN SERVER.");
+                            System.err.println("FORCE QUITTING...");
+                            System.exit(1);
+                        }
+                        break;
+                    case "FORCE QUIT":
+                        System.err.println("FORCE QUITTING...");
+                        //SHUT DOWN THE EXECUTOR FIRST, THEN SYSTEM.EXIT
+                        System.exit(1);
+                        break;
                 }
             }
-            switch(currentCommand.getArgument(0))
+            catch(Exception exception)
             {
-                case "QUIT CLIENT":
-                    //INITIATE CLIENT SHUTDOWN
-                    break;
-                case "QUIT SERVER":
-                    //INITIATE SERVER SHUTDOWN
-                    break;
-                case "FORCE QUIT":
-                    //INITIATE FORCE SHUTDOWN
-                    break;
+                System.err.println("EXCEPTION IN THREAD: " + "OpenStatusListener");
+                exception.printStackTrace();
             }
         }
     }
