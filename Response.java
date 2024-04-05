@@ -1,68 +1,43 @@
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Response implements Serializable
 {
-    private final List<Object> contents = new LinkedList<>();
-    public Response(Object...contents)
+    private boolean success;
+    private List<String> response;
+    public Response(boolean success, List<String> response)
     {
-        this.contents.addAll(Arrays.asList(contents));
+        this.success = success;
+        this.response = response;
     }
-    public List<Object> getContents()
+    public Response(boolean success)
     {
-        return this.contents;
+        this.success = success;
     }
-
-    public boolean isSuccessful()
+    public boolean getSuccess()
     {
-        return (boolean) this.contents.getFirst();
+        return success;
     }
-
+    public List<String> getResponse()
+    {
+        return response;
+    }
     public void setSuccess(boolean success)
     {
-        this.contents.set(0,success);
+        this.success = success;
     }
-
-    public void setContents(List<?> list)
+    public void setResponse(List<String> response)
     {
-        //SET CONTENTS AFTER 1ST ELEMENT
+        this.response = response;
     }
-
-    public void displayResponse()
-    {
-        Response response = new Response(this.contents);
-        if(response.isSuccessful())
-        {
-            System.out.println("Operation successful");
-        }
-        else
-        {
-            System.out.println("Operation unsuccessful");
-        }
-        //DEAL WITH RESPONSE CONTENT
-        for(Object object : response.getContents())
-        {
-            if(object.equals(response.getContents().getFirst()))
-            {
-                return;
-            }
-            else
-            {
-                System.out.println("Server responded: " + object);
-            }
-        }
-    }
-
     @Override
     public String toString()
     {
-        List<Object> responseList = new LinkedList<>();
-        for(Object object : contents)
+        String responseString = "\n";
+        for(int i = 1; i <= response.size(); i++)
         {
-            responseList.add(object.toString());
+            responseString = responseString.concat("RESPONSE" + i + "= ").concat(response.get(i));
         }
-        return responseList.toString();
+        return"SUCCESS: " + success + responseString;
     }
 }

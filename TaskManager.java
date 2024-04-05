@@ -4,12 +4,14 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class TaskManager
 {
+    //I COULD EXTEND THE THREAD CLASS TO CUSTOMIZE THIS MORE INSTEAD OF HAVING THEM ALL BE RUNNABLE/CALLABLE
     public static ExecutorService executor;
     public static Command currentCommand;
     public TaskManager(ExecutorService executor, Command currentCommand)
@@ -33,46 +35,54 @@ public class TaskManager
     {
         return TaskManager.currentCommand;
     }
-
-    public static class OpenServerSocket implements Callable<ServerSocket>
+    public static ServerSocket constructIncomingConnectionsListener(String IP_ADDRESS, int PORT)
     {
-        private final int SERVER_PORT;
-        public OpenServerSocket(int port)
+        try
         {
-            this.SERVER_PORT = port;
+            ServerSocket listenSocket = new ServerSocket(PORT);
+            System.out.println("HOSTING AT IP: | " + IP_ADDRESS + " |");
+            System.out.println("LISTENING ON PORT: | " + PORT + " |");
+            return listenSocket;
         }
-        public ServerSocket call()
+        catch(Exception exception)
         {
-            try
-            {
-                ServerSocket listenSocket = new ServerSocket(SERVER_PORT);
-                System.out.println("HOSTING AT IP: | " + Server.getServerIp() + " | ON PORT: | " + SERVER_PORT + " |");
-                return listenSocket;
-            }
-            catch(Exception exception)
-            {
-                System.err.println("EXCEPTION IN THREAD: " + "OpenServerSocket");
-                exception.printStackTrace();
-            }
-            return null;
+            System.err.println("EXCEPTION IN THREAD: " + "OpenListenSocket");
+            exception.printStackTrace();
         }
+        return null;
+    }
+    public static ServerSocket CreateNewPacketListener(String IP_ADDRESS, int PORT)
+    {
+        try
+        {
+            ServerSocket listenSocket = new ServerSocket(PORT);
+            System.out.println("HOSTING AT IP: | " + IP_ADDRESS + " |");
+            System.out.println("LISTENING ON PORT: | " + PORT + " |");
+            return listenSocket;
+        }
+        catch(Exception exception)
+        {
+            System.err.println("EXCEPTION IN THREAD: " + "OpenListenSocket");
+            exception.printStackTrace();
+        }
+        return null;
     }
 
-    public static class ListenForConnections implements Runnable
+    public static class AcceptConnections implements Runnable
     {
-        private final ServerSocket serverSocket;
-        public ListenForConnections(ServerSocket serverSocket)
+        private final ServerSocket listenSocket;
+        public AcceptConnections(ServerSocket listenSocket)
         {
-            this.serverSocket = serverSocket;
+            this.listenSocket = listenSocket;
         }
         public void run()
         {
             try
             {
-                while(!(currentCommand.equals("QUIT CLIENT") || currentCommand.equals("QUIT SERVER") || currentCommand.equals("FORCE QUIT")))
+                while(true)
                 {
-                    Socket socket = serverSocket.accept();
-                    System.out.println("A CLIENT HAS CONNECTED.");
+                    Socket socket = listenSocket.accept();
+                    System.out.println("RECEIVED A NEW CONNECTION.");
                     executor.submit(new ServeClientRequest(socket));
                 }
             }
@@ -84,11 +94,37 @@ public class TaskManager
         }
     }
 
-    public static class ConnectToHost implements Callable<Socket>
+    public static class ConnectionAcceptor implements Callable<Socket>
+    {
+        private final ServerSocket listenSocket;
+        public ConnectionAcceptor(ServerSocket listenSocket)
+        {
+            this.listenSocket = listenSocket;
+        }
+        public Socket call()
+        {
+            try
+            {
+                while(!(currentCommand.equals("QUIT CLIENT") || currentCommand.equals("QUIT SERVER") || currentCommand.equals("FORCE QUIT")))
+                {
+                    Socket socket = listenSocket.accept();
+                    System.out.println("RECEIVED A NEW CONNECTION.");
+                    executor.submit(new ServeClientRequest(socket));
+                }
+            }
+            catch(Exception exception)
+            {
+                System.err.println("EXCEPTION IN THREAD: " + "ListenForConnections");
+                exception.printStackTrace();
+            }
+        }
+    }
+
+    public static class Connect implements Callable<Socket>
     {
         private final String SERVER_IP;
         private final int SERVER_PORT;
-        public ConnectToHost(String SERVER_IP, int SERVER_PORT)
+        public Connect(String SERVER_IP, int SERVER_PORT)
         {
             this.SERVER_IP = SERVER_IP;
             this.SERVER_PORT = SERVER_PORT;
@@ -125,11 +161,11 @@ public class TaskManager
             try
             {
                 Packet<?> receivedPacket = executor.submit(new ReceivePacket(socket)).get();
-                Command receivedCommand = receivedPacket.getCommandFromPacket();
+                Command receivedCommand = receivedPacket.parseCommandFromPacket();
                 Response response = executor.submit(new ProcessCommandFromClient(receivedCommand)).get();
                 Packet<Response> responsePacket = new Packet<>(response);
 
-                Socket clientConnection = TaskManager.executor.submit(new TaskManager.ConnectToHost(Client.getClientIp(),Client.getClientPort())).get();
+                Socket clientConnection = TaskManager.executor.submit(new Connect(Client.getClientIp(),Client.getClientPort())).get();
                 executor.submit(new SendPacket(clientConnection, responsePacket));
             }
             catch(Exception exception)
@@ -156,7 +192,7 @@ public class TaskManager
                 Packet<Command> commandPacket = new Packet<>(command);
                 executor.submit(new SendPacket(socket,commandPacket));
                 Packet<?> receivedPacket = executor.submit(new ReceivePacket(socket)).get();
-                return receivedPacket.getResponseFromPacket();
+                return receivedPacket.parseResponseFromPacket();
             }
             catch(Exception exception)
             {
@@ -371,6 +407,113 @@ public class TaskManager
                 exception.printStackTrace();
             }
             return null;
+        }
+    }
+    public static class ServerInputListener implements Runnable
+    {
+        private final Scanner scanner;
+        public ServerInputListener(Scanner scanner)
+        {
+            this.scanner = scanner;
+        }
+        public void run()
+        {
+            do
+            {
+                System.out.println("\nENTER A COMMAND: ");
+                switch(scanner.nextLine().toUpperCase())
+                {
+                    case "STARTUP":
+                        break;
+
+                    case "QUIT CLIENT":
+                        TaskManager.currentCommand = new Command("QUIT CLIENT");
+                        break;
+
+                    case "QUIT SERVER":
+                        TaskManager.currentCommand = new Command("QUIT SERVER");
+                        break;
+
+                    case "FORCE QUIT":
+                        TaskManager.currentCommand = new Command("FORCE QUIT");
+                        break;
+
+                    default:
+                        System.out.println("\nVALID COMMANDS: \"QUIT CLIENT\" \"QUIT SERVER\" OR \"FORCE QUIT\"");
+                        TaskManager.currentCommand = new Command("INVALID");
+                        break;
+                }
+            }
+            while(TaskManager.currentCommand.equals("INVALID"));
+        }
+    }
+
+    public static class ClientInputListener implements Runnable
+    {
+        private final Scanner scanner;
+        public ClientInputListener(Scanner scanner)
+        {
+            this.scanner = scanner;
+        }
+        public void run()
+        {
+            do
+            {
+                System.out.println("\nENTER A COMMAND: ");
+                switch(scanner.nextLine().toUpperCase())
+                {
+                    case "STARTUP":
+                        break;
+
+                    case "LIST":
+                        TaskManager.currentCommand = new Command("LIST");
+                        break;
+
+                    case "DELETE":
+                        System.out.println("TYPE FILENAME TO DELETE: ");
+                        String filenameToDelete = scanner.nextLine();
+                        TaskManager.currentCommand = new Command("DELETE",filenameToDelete);
+                        break;
+
+                    case "RENAME":
+                        System.out.println("TYPE FILENAME TO RENAME: ");
+                        String filenameToRename = scanner.nextLine();
+                        System.out.println("TYPE NEW FILENAME: ");
+                        String newFilename = scanner.nextLine();
+                        TaskManager.currentCommand = new Command("RENAME",filenameToRename,newFilename);
+                        break;
+
+                    case "DOWNLOAD":
+                        System.out.println("TYPE FILENAME TO DOWNLOAD: ");
+                        String filenameToDownload = scanner.nextLine();
+                        TaskManager.currentCommand = new Command("DOWNLOAD",filenameToDownload);
+                        break;
+
+                    case "UPLOAD":
+                        System.out.println("TYPE FILENAME TO UPLOAD: ");
+                        String filenameToUpload = scanner.nextLine();
+                        TaskManager.currentCommand = new Command("UPLOAD",filenameToUpload);
+                        break;
+
+                    case "QUIT CLIENT":
+                        TaskManager.currentCommand = new Command("QUIT CLIENT");
+                        break;
+
+                    case "QUIT SERVER":
+                        TaskManager.currentCommand = new Command("QUIT SERVER");
+                        break;
+
+                    case "FORCE QUIT":
+                        TaskManager.currentCommand = new Command("FORCE QUIT");
+                        break;
+
+                    default:
+                        System.out.println("\nVALID COMMANDS: \"LIST\" \"DELETE\" \"RENAME\" \"DOWNLOAD\" \"UPLOAD\" \"QUIT CLIENT\" \"QUIT SERVER\" OR \"FORCE QUIT\"");
+                        TaskManager.currentCommand = new Command("INVALID");
+                        break;
+                }
+            }
+            while(TaskManager.currentCommand.equals("INVALID"));
         }
     }
 
