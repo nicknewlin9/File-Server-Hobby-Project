@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 public class Application
 {
     private static Status CURRENT_STATUS;
-    public static final int LISTENING_PORT = 3000; //INCOMING CONNECTIONS
+    public static final int LISTENING_PORT = 30000; //INCOMING CONNECTIONS
     public static final int INTERNAL_PORT = 3001; //INCOMING PACKETS
     public static String LOCAL_IP_ADDRESS;
     public static String DESTINATION_IP_ADDRESS;
@@ -27,7 +27,7 @@ public class Application
 
                 CURRENT_STATUS = Status.STARTUP;
 
-                EXECUTOR = Executors.newFixedThreadPool(8); //EXTRA THREADS FOR PROCESSING MULTIPLE CLIENTS
+                EXECUTOR = Executors.newFixedThreadPool(8);
 
                 EXECUTOR.submit(new OpenStatusListener());
 
@@ -56,7 +56,7 @@ public class Application
                     System.exit(0);
                 }
             }
-            if(args[0].equals("CLIENT"))
+            else if(args[0].equals("CLIENT"))
             {
                 System.out.println("STARTING CLIENT...");
 
@@ -109,6 +109,8 @@ public class Application
             System.err.println("EXCEPTION DURING STARTUP");
 
             System.err.println("FORCE QUITTING...");
+
+            exception.printStackTrace();
 
             System.exit(0);
         }
@@ -428,12 +430,12 @@ public class Application
         {
             try
             {
-                while(!CURRENT_STATUS.equals(Status.ONLINE))
+                while(!(CURRENT_STATUS.equals(Status.SHUTDOWN) || CURRENT_STATUS.equals(Status.CRITICAL_ERROR)))
                 {
                     Thread.sleep(1000);
                 }
 
-                System.out.println("SHUTTING DOWN...");
+                System.err.println("SHUTTING DOWN...");
                 System.err.println("HAVEN'T IMPLEMENTED SAFE SHUTDOWN YET");
                 System.err.println("FORCE QUITTING...");
                 System.exit(0);
@@ -477,104 +479,103 @@ public class Application
         {
             do
             {
-                if(!CURRENT_STATUS.equals(Status.CONNECTED))
+                System.out.println("\nENTER A COMMAND: ");
+                switch(scanner.nextLine().toUpperCase())
                 {
-                    System.out.println("\nENTER A COMMAND: ");
-                    switch(scanner.nextLine().toUpperCase())
-                    {
-                        case "CONNECT":
-                            System.out.println("TYPE IP ADDRESS TO CONNECT TO: ");
-                            String DESTINATION_IP = scanner.nextLine();
+                    case "CONNECT":
+                        System.out.println("TYPE IP ADDRESS TO CONNECT TO: ");
+                        String DESTINATION_IP = scanner.nextLine();
 
-                            Application.Connect(DESTINATION_IP); //SETS CURRENT_STATUS TO CONNECTED IF SUCCESSFUL
-                            break;
+                        Application.Connect(DESTINATION_IP); //SETS CURRENT_STATUS TO CONNECTED IF SUCCESSFUL
+                        break;
 
-                        case "QUIT":
-                            CURRENT_STATUS = Status.SHUTDOWN;
-                            break;
+                    case "QUIT":
+                        CURRENT_STATUS = Status.SHUTDOWN;
+                        break;
 
-                        case "FORCE QUIT":
-                            CURRENT_STATUS = Status.CRITICAL_ERROR;
-                            break;
+                    case "FORCE QUIT":
+                        CURRENT_STATUS = Status.CRITICAL_ERROR;
+                        break;
 
-                        default:
-                            System.out.println("\nVALID COMMANDS: \"CONNECT\" \"QUIT\" OR \"FORCE QUIT\"");
-                            break;
-                    }
-                }
-                else
-                {
-                    System.out.println("\nENTER A COMMAND: ");
-                    Command command;
-                    switch(scanner.nextLine().toUpperCase())
-                    {
-                        case "CONNECT":
-                            System.out.println("TYPE IP ADDRESS TO CONNECT TO: ");
-                            String DESTINATION_IP = scanner.nextLine();
-
-                            Application.Connect(DESTINATION_IP); //SETS CURRENT_STATUS TO CONNECTED IF SUCCESSFUL
-                            break;
-
-                        case "QUIT":
-                            CURRENT_STATUS = Status.SHUTDOWN;
-                            break;
-
-                        case "FORCE QUIT":
-                            CURRENT_STATUS = Status.CRITICAL_ERROR;
-                            break;
-
-                        case "LIST":
-                            command = new Command("LIST");
-
-                            Application.SendPacket(new Packet<>(command), DESTINATION_IP_ADDRESS);
-
-                            break;
-
-                        case "DELETE":
-                            System.out.println("FILENAME TO DELETE: ");
-                            String filenameToDelete = scanner.nextLine();
-                            command = new Command("DELETE", filenameToDelete);
-
-                            Application.SendPacket(new Packet<>(command), DESTINATION_IP_ADDRESS);
-
-                            break;
-
-                        case "RENAME":
-                            System.out.println("FILENAME TO RENAME: ");
-                            String filenameToRename = scanner.nextLine();
-                            System.out.println("NEW FILENAME: ");
-                            String newFilename = scanner.nextLine();
-                            command = new Command("RENAME", filenameToRename, newFilename);
-
-                            Application.SendPacket(new Packet<>(command), DESTINATION_IP_ADDRESS);
-
-                            break;
-
-                        case "DOWNLOAD":
-                            System.out.println("FILENAME TO DOWNLOAD: ");
-                            String filenameToDownload = scanner.nextLine();
-                            command = new Command("DOWNLOAD",filenameToDownload);
-
-                            Application.SendPacket(new Packet<>(command), DESTINATION_IP_ADDRESS);
-
-                            break;
-
-                        case "UPLOAD":
-                            System.out.println("FILENAME TO UPLOAD: ");
-                            String filenameToUpload = scanner.nextLine();
-                            command = new Command("UPLOAD",filenameToUpload);
-
-                            Application.SendPacket(new Packet<>(command), DESTINATION_IP_ADDRESS);
-
-                            break;
-
-                        default:
-                            System.out.println("\nVALID COMMANDS: \"CONNECT\" \"LIST\" \"DELETE\" \"RENAME\" \"DOWNLOAD\" \"UPLOAD\" \"QUIT\" OR \"FORCE QUIT\"");
-                            break;
-                    }
+                    default:
+                        System.out.println("\nVALID COMMANDS: \"CONNECT\" \"QUIT\" OR \"FORCE QUIT\"");
+                        break;
                 }
             }
-            while(CURRENT_STATUS.equals(Status.ONLINE));
+            while(!CURRENT_STATUS.equals(Status.CONNECTED));
+
+            do
+            {
+                System.out.println("\nENTER A COMMAND: ");
+                Command command;
+                switch(scanner.nextLine().toUpperCase())
+                {
+                    case "CONNECT":
+                        System.out.println("TYPE IP ADDRESS TO CONNECT TO: ");
+                        String DESTINATION_IP = scanner.nextLine();
+
+                        Application.Connect(DESTINATION_IP); //SETS CURRENT_STATUS TO CONNECTED IF SUCCESSFUL
+                        break;
+
+                    case "QUIT":
+                        CURRENT_STATUS = Status.SHUTDOWN;
+                        break;
+
+                    case "FORCE QUIT":
+                        CURRENT_STATUS = Status.CRITICAL_ERROR;
+                        break;
+
+                    case "LIST":
+                        command = new Command("LIST");
+
+                        Application.SendPacket(new Packet<>(command), DESTINATION_IP_ADDRESS);
+
+                        break;
+
+                    case "DELETE":
+                        System.out.println("FILENAME TO DELETE: ");
+                        String filenameToDelete = scanner.nextLine();
+                        command = new Command("DELETE", filenameToDelete);
+
+                        Application.SendPacket(new Packet<>(command), DESTINATION_IP_ADDRESS);
+
+                        break;
+
+                    case "RENAME":
+                        System.out.println("FILENAME TO RENAME: ");
+                        String filenameToRename = scanner.nextLine();
+                        System.out.println("NEW FILENAME: ");
+                        String newFilename = scanner.nextLine();
+                        command = new Command("RENAME", filenameToRename, newFilename);
+
+                        Application.SendPacket(new Packet<>(command), DESTINATION_IP_ADDRESS);
+
+                        break;
+
+                    case "DOWNLOAD":
+                        System.out.println("FILENAME TO DOWNLOAD: ");
+                        String filenameToDownload = scanner.nextLine();
+                        command = new Command("DOWNLOAD",filenameToDownload);
+
+                        Application.SendPacket(new Packet<>(command), DESTINATION_IP_ADDRESS);
+
+                        break;
+
+                    case "UPLOAD":
+                        System.out.println("FILENAME TO UPLOAD: ");
+                        String filenameToUpload = scanner.nextLine();
+                        command = new Command("UPLOAD",filenameToUpload);
+
+                        Application.SendPacket(new Packet<>(command), DESTINATION_IP_ADDRESS);
+
+                        break;
+
+                    default:
+                        System.out.println("\nVALID COMMANDS: \"CONNECT\" \"LIST\" \"DELETE\" \"RENAME\" \"DOWNLOAD\" \"UPLOAD\" \"QUIT\" OR \"FORCE QUIT\"");
+                        break;
+                }
+            }
+            while(CURRENT_STATUS.equals(Status.CONNECTED));
         }
     }
 }
