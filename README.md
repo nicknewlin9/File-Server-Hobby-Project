@@ -1,7 +1,24 @@
-# File-Server-Hobby-Project
-Experimenting with different Java features for my CS 316 file server project
-
-# TODO:
-Rebuild Client and Server using new changes<br>
-Implement more robust exception handling<br>
-Change the format of Command and Response to better represent those objects
+# FILE SERVER
+### - 
+### - 
+### - 
+### - 
+### - 
+#
+#
+# HOW TO USE
+### - 
+### - 
+### - 
+### - 
+### - 
+#
+#
+# TODO
+### - MAKE A DEBUG MODE WHERE IT PRINTS OUT EVERYTHING?
+### - ADD GRACEFUL SHUTDOWN TO THE SERVER AND CLIENT STATUS LISTENERS
+### - 
+### - 
+### - 
+#
+#

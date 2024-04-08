@@ -1,66 +1,30 @@
 import java.io.Serializable;
+import java.net.InetSocketAddress;
 
 public class Packet<T> implements Serializable
 {
-    private String sourceIP;
-    private int destinationPort;
-    private T data;
+    public InetSocketAddress SOURCE_SOCKET_ADDRESS = new InetSocketAddress(Application.LOCAL_IP_ADDRESS, Application.INTERNAL_PORT);
+    private T DATA;
 
-    public Packet(String sourceIP, int destinationPort, T data)
+    public Packet(T DATA)
     {
-        this.sourceIP = sourceIP;
-        this.destinationPort = destinationPort;
-        this.data = data;
+        this.DATA = DATA;
+    }
+    public T getDATA()
+    {
+        return this.DATA;
+    }
+    public void setDATA(T DATA)
+    {
+        this.DATA = DATA;
     }
     public String getSourceIP()
     {
-        return sourceIP;
-    }
-    public void setSourceIP(String sourceIP)
-    {
-        this.sourceIP = sourceIP;
-    }
-    public int getDestinationPort()
-    {
-        return destinationPort;
-    }
-    public void setDestinationPort(int destinationPort)
-    {
-        this.destinationPort = destinationPort;
-    }
-    public T getData()
-    {
-        return data;
-    }
-    public void setData(T data)
-    {
-        this.data = data;
-    }
-    public Command parseCommandFromPacket()
-    {
-        if(data instanceof Command)
-        {
-            return (Command) getData();
-        }
-        else
-        {
-            throw new ClassCastException("CANNOT PARSE COMMAND FROM PACKET");
-        }
-    }
-    public Response parseResponseFromPacket()
-    {
-        if(data instanceof Response)
-        {
-            return (Response) getData();
-        }
-        else
-        {
-            throw new ClassCastException("CANNOT PARSE RESPONSE FROM PACKET");
-        }
+        return this.SOURCE_SOCKET_ADDRESS.getHostName();
     }
     @Override
     public String toString()
     {
-        return"SOURCE_IP: " + sourceIP + "\nDESTINATION_PORT: " + destinationPort + "\nCONTENTS: " + data;
+        return"PACKET<" + this.SOURCE_SOCKET_ADDRESS + "><C"+ this.DATA + ">";
     }
 }

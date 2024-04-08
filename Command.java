@@ -1,11 +1,10 @@
 import java.io.Serializable;
-import java.util.List;
 
 public class Command implements Serializable
 {
     private String command;
-    private List<String> args;
-    public Command(String command, List<String> args)
+    private String[] args;
+    public Command(String command, String... args)
     {
         this.command = command;
         this.args = args;
@@ -18,7 +17,7 @@ public class Command implements Serializable
     {
         return command;
     }
-    public List<String> getArgs()
+    public String[] getArgs()
     {
         return args;
     }
@@ -26,7 +25,7 @@ public class Command implements Serializable
     {
         this.command = command;
     }
-    public void setArgs(List<String> args)
+    public void setArgs(String[] args)
     {
         this.args = args;
     }
@@ -37,11 +36,11 @@ public class Command implements Serializable
     @Override
     public String toString()
     {
-        String stringOfArgs = "\n";
-        for(int i = 1; i <= args.size(); i++)
+        String argsString = "";
+        for(int i = 1; i <= args.length; i++)
         {
-            stringOfArgs = stringOfArgs.concat("ARG" + i + "= ").concat(args.get(i));
+            argsString = argsString.concat("ARG" + i + "= ").concat(args[i].concat("\n"));
         }
-        return"COMMAND: " + command + stringOfArgs;
+        return"COMMAND: " + command + "\n" + argsString;
     }
 }

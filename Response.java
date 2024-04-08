@@ -1,11 +1,10 @@
 import java.io.Serializable;
-import java.util.List;
 
 public class Response implements Serializable
 {
     private boolean success;
-    private List<String> response;
-    public Response(boolean success, List<String> response)
+    private String[] response;
+    public Response(boolean success, String... response)
     {
         this.success = success;
         this.response = response;
@@ -18,7 +17,7 @@ public class Response implements Serializable
     {
         return success;
     }
-    public List<String> getResponse()
+    public String[] getResponse()
     {
         return response;
     }
@@ -26,18 +25,22 @@ public class Response implements Serializable
     {
         this.success = success;
     }
-    public void setResponse(List<String> response)
+    public void setResponse(String[] response)
     {
         this.response = response;
+    }
+    public boolean equals(boolean success)
+    {
+        return success == this.success;
     }
     @Override
     public String toString()
     {
-        String responseString = "\n";
-        for(int i = 1; i <= response.size(); i++)
+        String responseString = "";
+        for(int i = 1; i <= response.length; i++)
         {
-            responseString = responseString.concat("RESPONSE" + i + "= ").concat(response.get(i));
+            responseString = responseString.concat("RESPONSE" + i + "= ").concat(response[i].concat("\n"));
         }
-        return"SUCCESS: " + success + responseString;
+        return"SUCCESS: " + success + "\n" + responseString;
     }
 }
