@@ -1,9 +1,7 @@
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+package src;
+
+import java.io.*;
+import java.net.*;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -13,7 +11,7 @@ public class Application
     private static Status CURRENT_STATUS;
     public static final int LISTENING_PORT = 30000; //INCOMING CONNECTIONS
     public static final int INTERNAL_PORT = 3001; //INCOMING PACKETS
-    public static String LOCAL_IP_ADDRESS;
+    public static String LOCAL_IP_ADDRESS = "10.0.0.49"; //CAN MAKE THIS A VARIABLE ONLY ON THE SERVER
     public static String DESTINATION_IP_ADDRESS;
     private static ExecutorService EXECUTOR;
 
@@ -23,7 +21,14 @@ public class Application
         {
             if(args[0].equals("SERVER"))
             {
-                System.out.println("STARTING SERVER...");
+                System.out.print("STARTING SERVER");
+                Thread.sleep(1000);
+                System.out.print(".");
+                Thread.sleep(1000);
+                System.out.print(".");
+                Thread.sleep(1000);
+                System.out.print(".\n");
+                Thread.sleep(1000);
 
                 CURRENT_STATUS = Status.STARTUP;
 
@@ -35,12 +40,10 @@ public class Application
 
                 if(!AcceptIncomingConnections.incomingConnectionsListenSocket.isClosed())
                 {
-                    LOCAL_IP_ADDRESS = AcceptIncomingConnections.incomingConnectionsListenSocket.getInetAddress().getHostName();
+                    //LOCAL_IP_ADDRESS = AcceptIncomingConnections.incomingConnectionsListenSocket.getInetAddress().getHostName();
 
                     System.out.println("STARTUP SUCCESSFUL");
-
                     System.out.println("LISTENING FOR CONNECTIONS AT IP: " + LOCAL_IP_ADDRESS);
-
                     System.out.println("ON PORT: " + LISTENING_PORT);
 
                     CURRENT_STATUS = Status.ONLINE;
@@ -50,15 +53,20 @@ public class Application
                 else
                 {
                     System.err.println("STARTUP UNSUCCESSFUL");
-
                     System.err.println("SHUTTING DOWN...");
-
                     System.exit(0);
                 }
             }
             else if(args[0].equals("CLIENT"))
             {
-                System.out.println("STARTING CLIENT...");
+                System.out.print("STARTING CLIENT");
+                Thread.sleep(1000);
+                System.out.print(".");
+                Thread.sleep(1000);
+                System.out.print(".");
+                Thread.sleep(1000);
+                System.out.print(".\n");
+                Thread.sleep(1000);
 
                 CURRENT_STATUS = Status.STARTUP;
 
@@ -73,9 +81,7 @@ public class Application
                     LOCAL_IP_ADDRESS = AcceptIncomingConnections.incomingConnectionsListenSocket.getInetAddress().getHostName();
 
                     System.out.println("STARTUP SUCCESSFUL");
-
                     System.out.println("LISTENING FOR CONNECTIONS AT IP: " + LOCAL_IP_ADDRESS);
-
                     System.out.println("ON PORT: " + LISTENING_PORT);
 
                     CURRENT_STATUS = Status.ONLINE;
@@ -85,20 +91,15 @@ public class Application
                 else
                 {
                     System.err.println("STARTUP UNSUCCESSFUL");
-
                     System.err.println("SHUTTING DOWN...");
-
                     System.exit(0);
                 }
             }
             else
             {
                 System.err.println("INVALID STARTUP SYNTAX");
-
                 System.err.println("APPLICATION <CLIENT>");
-
                 System.err.println("APPLICATION <SERVER>");
-
                 System.exit(0);
             }
         }
@@ -107,14 +108,12 @@ public class Application
             CURRENT_STATUS = Status.CRITICAL_ERROR;
 
             System.err.println("EXCEPTION DURING STARTUP");
-
             System.err.println("FORCE QUITTING...");
-
             exception.printStackTrace();
-
             System.exit(0);
         }
     }
+
     public static void Connect(String IP_ADDRESS)
     {
         try(Socket socket = new Socket())
@@ -134,8 +133,10 @@ public class Application
         {
             System.err.println("COULDN'T CONNECT TO: " + IP_ADDRESS);
             System.err.println("VIA LISTENING PORT: " + LISTENING_PORT);
+            exception.printStackTrace();
         }
     }
+
     public static void SendPacket(Packet<?> outgoingPacket, String IP_ADDRESS)
     {
         try(Socket socket = new Socket())
@@ -155,8 +156,10 @@ public class Application
         {
             System.err.println("COULDN'T SEND PACKET: " + outgoingPacket);
             System.err.println("TO IP ADDRESS: " + IP_ADDRESS);
+            exception.printStackTrace();
         }
     }
+
     public static Packet<?> ReadPacketFromSocket(Socket socket)
     {
         try
@@ -173,9 +176,11 @@ public class Application
         catch(IOException | ClassNotFoundException exception)
         {
             System.err.println("COULDN'T READ PACKET FROM SOCKET: " + socket);
+            exception.printStackTrace();
         }
         return null;
     }
+
     public static void ServeNewConnection()
     {
         try
@@ -196,14 +201,17 @@ public class Application
         catch(IOException exception)
         {
             System.err.println("COULDN'T SERVE NEW CONNECTION");
+            exception.printStackTrace();
         }
     }
+
     public static void ProcessIncomingPacket(Packet<?> incomingPacket)
     {
         try
         {
             System.out.println("NOW PROCESSING PACKET...");
 
+            //GET THE DATA'S OBJECT TYPE FROM THE PACKET FIRST, THEN DO THE IF STATEMENTS
             if(incomingPacket.getDATA() instanceof Command)
             {
                 Packet<Command> commandPacket = (Packet<Command>) incomingPacket;
@@ -231,7 +239,7 @@ public class Application
                         Application.SendPacket(responsePacket, commandPacket.getSourceIP());
                 }
             }
-            if(incomingPacket.getDATA() instanceof Response)
+            else if(incomingPacket.getDATA() instanceof Response)
             {
                 Packet<Response> responsePacket = (Packet<Response>) incomingPacket;
                 Response response = responsePacket.getDATA();
@@ -245,8 +253,10 @@ public class Application
         catch(Exception exception)
         {
             System.err.println("COULDN'T PROCESS INCOMING PACKET");
+            exception.printStackTrace();
         }
     }
+
     public static class AcceptIncomingConnections implements Runnable
     {
         private static ServerSocket incomingConnectionsListenSocket;
@@ -274,9 +284,11 @@ public class Application
             catch(Exception exception)
             {
                 System.err.println("EXCEPTION IN THREAD ACCEPTING INCOMING CONNECTIONS");
+                exception.printStackTrace();
             }
         }
     }
+
     public static class AcceptIncomingPackets implements Runnable
     {
         private static ServerSocket incomingPacketsListenSocket;
@@ -301,9 +313,11 @@ public class Application
             catch(Exception exception)
             {
                 System.err.println("EXCEPTION IN THREAD ACCEPTING INCOMING PACKETS");
+                exception.printStackTrace();
             }
         }
     }
+
     public static class ProcessListCommand implements Runnable
     {
         private final Packet<Command> commandPacket;
@@ -325,9 +339,11 @@ public class Application
             catch(Exception exception)
             {
                 System.err.println("EXCEPTION IN THREAD PROCESSING LIST COMMAND");
+                exception.printStackTrace();
             }
         }
     }
+
     public static class ProcessDeleteCommand implements Runnable
     {
         private final Packet<Command> commandPacket;
@@ -349,9 +365,11 @@ public class Application
             catch(Exception exception)
             {
                 System.err.println("EXCEPTION IN THREAD PROCESSING DELETE COMMAND");
+                exception.printStackTrace();
             }
         }
     }
+
     public static class ProcessRenameCommand implements Runnable
     {
         private final Packet<Command> commandPacket;
@@ -373,9 +391,11 @@ public class Application
             catch(Exception exception)
             {
                 System.err.println("EXCEPTION IN THREAD PROCESSING RENAME COMMAND");
+                exception.printStackTrace();
             }
         }
     }
+
     public static class ProcessDownloadCommand implements Runnable
     {
         private final Packet<Command> commandPacket;
@@ -397,9 +417,11 @@ public class Application
             catch(Exception exception)
             {
                 System.err.println("EXCEPTION IN THREAD PROCESSING DOWNLOAD COMMAND");
+                exception.printStackTrace();
             }
         }
     }
+
     public static class ProcessUploadCommand implements Runnable
     {
         private final Packet<Command> commandPacket;
@@ -421,9 +443,11 @@ public class Application
             catch(Exception exception)
             {
                 System.err.println("EXCEPTION IN THREAD PROCESSING UPLOAD COMMAND");
+                exception.printStackTrace();
             }
         }
     }
+
     public static class OpenStatusListener implements Runnable
     {
         public void run()
@@ -443,9 +467,11 @@ public class Application
             catch(Exception exception)
             {
                 System.err.println("EXCEPTION IN THREAD SERVER STATUS LISTENER");
+                exception.printStackTrace();
             }
         }
     }
+
     public static class ServerInputListener implements Runnable
     {
         private final Scanner scanner = new Scanner(System.in);
@@ -472,6 +498,7 @@ public class Application
             while(CURRENT_STATUS.equals(Status.ONLINE));
         }
     }
+
     public static class ClientInputListener implements Runnable
     {
         private final Scanner scanner = new Scanner(System.in);
