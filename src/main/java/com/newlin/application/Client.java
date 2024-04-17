@@ -1,14 +1,14 @@
 package com.newlin.application;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
-import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
-
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.ReentrantLock;
@@ -17,7 +17,7 @@ public class Client
 {
     public static final int MAX_REQUESTS = 3;
 
-    public static final int NUM_THREADS = 3; //NEED TO CHANGE THISSSSSSSSS
+    public static final int NUM_THREADS = 3 + MAX_REQUESTS;
 
     public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NUM_THREADS);
 
@@ -106,8 +106,7 @@ public class Client
             try
             {
                 commandRequest.acquire();
-                Command command = UserInputListener.CURRENT_COMMAND;
-
+                Command command = commandQueue.element();
                 Actions action = command.getAction();
                 switch(action)
                 {
@@ -127,6 +126,8 @@ public class Client
                         EXECUTOR.submit(new ProcessUploadCommand(command));
 
                     default:
+                        Response response = new Response(false, "COMMAND NOT RECOGNIZED");
+                        System.out.println(response);
                         try
                         {
                             commandQueueLock.lock();
