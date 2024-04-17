@@ -1,3 +1,5 @@
+package com.newlin.application;
+
 import java.io.Serializable;
 
 public class Response implements Serializable

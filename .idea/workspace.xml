@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Rebuilt project using gradle and groovy" />
+    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Added README.md">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Actions.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Client.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Command.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Application.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Command.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Packet.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Response.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Status.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ApplicationTest.java" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -33,30 +46,6 @@
                 <item name="File-Server-Program" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="File-Server-Program" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="build" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="File-Server-Program" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="build setup" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="File-Server-Program" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="documentation" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="File-Server-Program" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="help" type="c8890929:TasksNode$1" />
-              </path>
             </expand>
             <select />
           </tree_state>
@@ -67,6 +56,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Enum" />
         <option value="Class" />
       </list>
     </option>
@@ -100,25 +90,31 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.File-Server-Program [:Application.main()].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.File-Server-Program [:Main.main()].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/nicholasnewlin/Desktop/File-Server-Program/src/main/java&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.File-Server-Program [:Application.main()].executor": "Run",
+    "Gradle.File-Server-Program [:Main.main()].executor": "Run",
+    "Gradle.File-Server-Program [:Server.main()].executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/nicholasnewlin/Desktop/File-Server-Program/src/main/java",
+    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
   </component>
   <component name="RunManager" selected="Application.Application">
     <configuration name="Application" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Application" />
+      <option name="MAIN_CLASS_NAME" value="com.newlin.application.Application" />
       <module name="File-Server-Program.main" />
+      <option name="PROGRAM_PARAMETERS" value="CLIENT" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -130,8 +126,22 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.newlin.application.Server" />
+      <module name="File-Server-Program.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value=".*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Server" />
         <item itemvalue="Application.Application" />
         <item itemvalue="Application.Main" />
       </list>
@@ -154,7 +164,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712786994567</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Added README.md">
+      <option name="closed" value="true" />
+      <created>1712788210713</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1712788210713</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -170,6 +188,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Rebuilt project using gradle and groovy" />
-    <option name="LAST_COMMIT_MESSAGE" value="Rebuilt project using gradle and groovy" />
+    <MESSAGE value="Added README.md" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added README.md" />
   </component>
 </project>
