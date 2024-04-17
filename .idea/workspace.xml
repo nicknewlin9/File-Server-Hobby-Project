@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Removed unnecessary classes&#10;Rebuilt Client and Server to be fundamentally different from each other&#10;Updated README">
+    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Optimized imports&#10;Fixed Client.NUM_THREADS">
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Server.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,6 +82,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Gradle.File-Server-Program [:Application.main()].executor": "Run",
+    "Gradle.File-Server-Program [:Client.main()].executor": "Run",
     "Gradle.File-Server-Program [:Main.main()].executor": "Run",
     "Gradle.File-Server-Program [:Server.main()].executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -100,7 +100,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Application">
+  <component name="RunManager" selected="Application.Client">
     <configuration name="Application" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.newlin.application.Application" />
       <module name="File-Server-Program.main" />
@@ -109,9 +109,35 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.newlin.application.Client" />
+      <module name="File-Server-Program.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.newlin.application.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
       <module name="File-Server-Program.main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Server (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.newlin.application.Server" />
+      <module name="File-Server-Program.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.newlin.application.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -131,6 +157,8 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Client" />
+        <item itemvalue="Application.Server (1)" />
         <item itemvalue="Application.Server" />
         <item itemvalue="Application.Application" />
         <item itemvalue="Application.Main" />
@@ -170,7 +198,15 @@
       <option name="project" value="LOCAL" />
       <updated>1713317365137</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Optimized imports&#10;Fixed Client.NUM_THREADS">
+      <option name="closed" value="true" />
+      <created>1713317899023</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1713317899023</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -188,6 +224,7 @@
     <MESSAGE value="Rebuilt project using gradle and groovy" />
     <MESSAGE value="Added README.md" />
     <MESSAGE value="Removed unnecessary classes&#10;Rebuilt Client and Server to be fundamentally different from each other&#10;Updated README" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed unnecessary classes&#10;Rebuilt Client and Server to be fundamentally different from each other&#10;Updated README" />
+    <MESSAGE value="Optimized imports&#10;Fixed Client.NUM_THREADS" />
+    <option name="LAST_COMMIT_MESSAGE" value="Optimized imports&#10;Fixed Client.NUM_THREADS" />
   </component>
 </project>

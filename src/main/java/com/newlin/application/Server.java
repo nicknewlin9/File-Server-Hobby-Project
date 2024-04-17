@@ -326,7 +326,6 @@ public class Server
         {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socketChannel.socket().getOutputStream());
             objectOutputStream.writeObject(response);
-            objectOutputStream.close();
         }
         catch(IOException exception)
         {

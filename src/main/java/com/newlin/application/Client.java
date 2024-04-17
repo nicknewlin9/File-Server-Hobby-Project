@@ -300,7 +300,6 @@ public class Client
         {
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socketChannel.socket().getOutputStream());
             objectOutputStream.writeObject(command);
-            objectOutputStream.close();
         }
         catch(IOException exception)
         {
