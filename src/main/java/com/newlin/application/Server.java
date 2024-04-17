@@ -3,9 +3,8 @@ package com.newlin.application;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetSocketAddress;
-import java.nio.channels.ServerSocketChannel;
-import java.nio.channels.SocketChannel;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
@@ -17,19 +16,15 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Server
 {
     public static final int MAX_CONNECTED_CLIENTS = 3;
-
     public static final int MAX_REQUESTS_PER_CLIENT = 3;
-
-    public static final int NUM_THREADS = 3 + (MAX_CONNECTED_CLIENTS * MAX_REQUESTS_PER_CLIENT);
-
-    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NUM_THREADS);
-
     public static final int LISTENING_PORT = 3001;
 
-    public static Queue<SocketChannel> clientQueue = new LinkedList<>();
+    public static final int NUM_THREADS = 3 + (MAX_CONNECTED_CLIENTS * MAX_REQUESTS_PER_CLIENT);
+    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NUM_THREADS);
+
+    public static Queue<ServeClient> clientQueue = new LinkedList<>();
     public static ReentrantLock clientQueueLock = new ReentrantLock();
     public static Semaphore clientQueueSlot = new Semaphore(MAX_CONNECTED_CLIENTS,true);
-    public static Semaphore clientConnection = new Semaphore(0,true);
 
     public static boolean isOnline = false;
     public static ReentrantLock isOnlineLock = new ReentrantLock();
@@ -48,15 +43,11 @@ public class Server
             System.out.print(".\n");
             Thread.sleep(1000);
 
-            //CREATES A THREAD THAT BLOCKS UNTIL IT CAN ACQUIRE AN AVAILABLE QUEUE SLOT
+            //CREATES A THREAD THAT BLOCKS UNTIL IT CAN ACQUIRE AN AVAILABLE CLIENT QUEUE SLOT
             //THEN BLOCKS UNTIL IT RECEIVES A NEW CLIENT CONNECTION
             //ADDS THE NEW CLIENT CONNECTION TO THE QUEUE
-            //RELEASES A PERMIT TO THE CONSUMER
-            EXECUTOR.submit(new NewConnectionProducer());
-
-            //CREATES A THREAD THAT BLOCKS UNTIL IT CAN ACQUIRE A NEW CLIENT CONNECTION
-            //SUBMITS THAT NEW CLIENT CONNECTION TO THE EXECUTOR FOR PROCESSING
-            EXECUTOR.submit(new NewConnectionConsumer());
+            //SUBMITS CLIENT CONNECTION TO THE EXECUTOR
+            EXECUTOR.submit(new AcceptClients());
 
             //CREATES AN ACTIVE THREAD FOR ACCEPTING AND PROCESSING USER INPUT
             EXECUTOR.submit(new UserInputListener());
@@ -68,14 +59,13 @@ public class Server
         }
     }
 
-    public static class NewConnectionProducer implements Runnable
+    public static class AcceptClients implements Runnable
     {
         public void run()
         {
-            try
+            try(ServerSocket incomingConnectionsListenSocket = new ServerSocket(LISTENING_PORT))
             {
-                ServerSocketChannel incomingConnectionsListenChannel = ServerSocketChannel.open().bind(new InetSocketAddress(LISTENING_PORT));
-                if(incomingConnectionsListenChannel.isOpen())
+                if(!incomingConnectionsListenSocket.isClosed())
                 {
                     try
                     {
@@ -90,64 +80,36 @@ public class Server
                 }
                 do
                 {
+                    if(incomingConnectionsListenSocket.isClosed())
+                    {
+                        try
+                        {
+                            isOnlineLock.lock();
+                            isOnline = false;
+                            System.out.println("SERVER CLOSED");
+                        }
+                        finally
+                        {
+                            isOnlineLock.unlock();
+                        }
+                    }
                     try
                     {
                         clientQueueSlot.acquire();
-                        SocketChannel newConnection = incomingConnectionsListenChannel.accept();
+                        Socket newConnection = incomingConnectionsListenSocket.accept();
+                        ServeClient newClient = new ServeClient(newConnection);
                         clientQueueLock.lock();
-                        clientQueue.add(newConnection);
-                        clientConnection.release();
+                        clientQueue.add(newClient);
+                        EXECUTOR.submit(newClient);
                     }
                     finally
                     {
                         clientQueueLock.unlock();
                     }
                 }
-                while(incomingConnectionsListenChannel.isOpen());
-
-                try
-                {
-                    isOnlineLock.lock();
-                    isOnline = false;
-                    System.out.println("SERVER CLOSED");
-                }
-                finally
-                {
-                    isOnlineLock.unlock();
-                }
-            }
-            catch(InterruptedException | IOException exception)
-            {
-                exception.printStackTrace();
-            }
-        }
-    }
-
-    public static class NewConnectionConsumer implements Runnable
-    {
-        public void run()
-        {
-            try
-            {
-                do
-                {
-                    clientConnection.acquire();
-                    SocketChannel socketChannel = clientQueue.element();
-                    System.out.println("SERVING NEW CONNECTION FROM: " + socketChannel.socket().getInetAddress().getHostName());
-
-                    //CREATES A THREAD THAT BLOCKS UNTIL IT CAN ACQUIRE AN AVAILABLE COMMAND SLOT
-                    //THEN BLOCKS UNTIL IT RECEIVES A NEW COMMAND FROM CLIENT
-                    //ADDS THE NEW COMMAND TO THE QUEUE
-                    //RELEASES A PERMIT TO THE CONSUMER
-                    EXECUTOR.submit(new NewCommandProducer(socketChannel));
-
-                    //CREATES A THREAD THAT BLOCKS UNTIL IT CAN ACQUIRE A NEW COMMAND REQUEST
-                    //SUBMITS THAT NEW COMMAND TO THE EXECUTOR TO PROCESSING
-                    EXECUTOR.submit(new NewCommandConsumer(socketChannel));
-                }
                 while(isOnline);
             }
-            catch(InterruptedException exception)
+            catch(InterruptedException | IOException exception)
             {
                 exception.printStackTrace();
             }
@@ -183,28 +145,25 @@ public class Server
         }
     }
 
-    public static class NewCommandProducer implements Runnable
+    public static class ServeClient implements Runnable
     {
-        public SocketChannel socketChannel;
+        public Socket socket;
+        public ObjectInputStream objectInputStream;
+        public ObjectOutputStream objectOutputStream;
 
-        public static Queue<Command> commandQueue = new LinkedList<>();
-        public static ReentrantLock commandQueueLock = new ReentrantLock();
-        public static Semaphore commandQueueSlot = new Semaphore(MAX_REQUESTS_PER_CLIENT,true);
-        public static Semaphore commandRequest = new Semaphore(0,true);
+        public Queue<ServeCommand> commandQueue = new LinkedList<>();
+        public ReentrantLock commandQueueLock = new ReentrantLock();
+        public Semaphore commandQueueSlot = new Semaphore(MAX_REQUESTS_PER_CLIENT,true);
 
-        public static boolean isConnected = false;
-        public static ReentrantLock isConnectedLock = new ReentrantLock();
+        public boolean isConnected = false;
+        public ReentrantLock isConnectedLock = new ReentrantLock();
 
-        public NewCommandProducer(SocketChannel socketChannel)
-        {
-            this.socketChannel = socketChannel;
-        }
-
-        public void run()
+        public ServeClient(Socket socket)
         {
             try
             {
-                if(socketChannel.isOpen())
+                this.socket = socket;
+                if(this.socket.isConnected())
                 {
                     try
                     {
@@ -216,35 +175,55 @@ public class Server
                         isConnectedLock.unlock();
                     }
                 }
+                this.objectInputStream = new ObjectInputStream(this.socket.getInputStream());
+                this.objectOutputStream = new ObjectOutputStream(this.socket.getOutputStream());
+            }
+            catch(IOException exception)
+            {
+                exception.printStackTrace();
+            }
+        }
+
+        public void run()
+        {
+            try
+            {
+                System.out.println("RECEIVED NEW CONNECTION FROM: " + socket.getInetAddress().getHostName());
                 do
                 {
+                    if(!socket.isConnected())
+                    {
+                        try
+                        {
+                            isConnectedLock.lock();
+                            isConnected = false;
+                            clientQueueLock.lock();
+                            clientQueue.remove(this);
+                            clientQueueSlot.release();
+                        }
+                        finally
+                        {
+                            clientQueueLock.unlock();
+                            isConnectedLock.unlock();
+                            Thread.currentThread().interrupt();
+                        }
+                    }
                     try
                     {
                         commandQueueSlot.acquire();
-                        ObjectInputStream objectInputStream = new ObjectInputStream(socketChannel.socket().getInputStream());
                         Command receivedCommand = (Command) objectInputStream.readObject();
+                        ServeClient serveClient = this;
+                        ServeCommand newCommand = new ServeCommand(serveClient, receivedCommand);
                         commandQueueLock.lock();
-                        commandQueue.add(receivedCommand);
-                        commandRequest.release();
+                        commandQueue.add(newCommand);
+                        EXECUTOR.submit(newCommand);
                     }
                     finally
                     {
                         commandQueueLock.unlock();
                     }
                 }
-                while(socketChannel.isOpen());
-
-                //IF THE SOCKET CHANNEL CLOSED
-                try
-                {
-                    clientQueueLock.lock();
-                    clientQueue.remove(this.socketChannel);
-                    clientQueueSlot.release();
-                }
-                finally
-                {
-                    clientQueueLock.unlock();
-                }
+                while(isConnected);
             }
             catch(InterruptedException | IOException | ClassNotFoundException exception)
             {
@@ -253,111 +232,90 @@ public class Server
         }
     }
 
-    public static class NewCommandConsumer implements Runnable //CONSUMER OF PACKETS
+    public static class ServeCommand implements Runnable
     {
-        public SocketChannel socketChannel;
+        public ServeClient client;
+        public Command command;
 
-        public NewCommandConsumer(SocketChannel socketChannel)
+        public ServeCommand(ServeClient client, Command command)
         {
-            this.socketChannel = socketChannel;
+            this.client = client;
+            this.command = command;
         }
 
         public void run()
         {
             try
             {
-                do
+                System.out.println("RECEIVED COMMAND: " + command + "\nFROM: " + client.socket.getInetAddress().getHostName());
+                ServeCommand serveCommand = this;
+                switch(command.getAction())
                 {
-                    NewCommandProducer.commandRequest.acquire();
-                    Command command = NewCommandProducer.commandQueue.element();
-                    System.out.println("RECEIVED COMMAND FROM: " + this.socketChannel.socket().getInetAddress().getHostName());
+                    case Actions.LIST:
+                        EXECUTOR.submit(new ProcessListCommand(serveCommand, command));
 
-                    ProcessCommand(command, socketChannel);
+                    case Actions.DELETE:
+                        EXECUTOR.submit(new ProcessDeleteCommand(serveCommand, command));
+
+                    case Actions.RENAME:
+                        EXECUTOR.submit(new ProcessRenameCommand(serveCommand, command));
+
+                    case Actions.DOWNLOAD:
+                        EXECUTOR.submit(new ProcessDownloadCommand(serveCommand, command));
+
+                    case Actions.UPLOAD:
+                        EXECUTOR.submit(new ProcessUploadCommand(serveCommand, command));
+
+                    default:
+                        Response response = new Response(false, "RECEIVED INVALID COMMAND");
+                        client.objectOutputStream.writeObject(response);
+                        client.objectOutputStream.flush();
+                        try
+                        {
+                            client.commandQueueLock.lock();
+                            client.commandQueue.remove(serveCommand);
+                            client.commandQueueSlot.release();
+                        }
+                        finally
+                        {
+                            client.commandQueueLock.unlock();
+                        }
                 }
-                while(NewCommandProducer.isConnected);
             }
-            catch(InterruptedException exception)
+            catch(IOException exception)
             {
                 exception.printStackTrace();
             }
         }
     }
 
-    public static void ProcessCommand(Command command, SocketChannel socketChannel)
-    {
-        Response response;
-        Actions action = command.getAction();
-        switch(action)
-        {
-            case Actions.LIST:
-                EXECUTOR.submit(new ProcessListCommand(command,socketChannel));
-
-            case Actions.DELETE:
-                EXECUTOR.submit(new ProcessDeleteCommand(command,socketChannel));
-
-            case Actions.RENAME:
-                EXECUTOR.submit(new ProcessRenameCommand(command,socketChannel));
-
-            case Actions.DOWNLOAD:
-                EXECUTOR.submit(new ProcessDownloadCommand(command,socketChannel));
-
-            case Actions.UPLOAD:
-                EXECUTOR.submit(new ProcessUploadCommand(command,socketChannel));
-
-            default:
-                response = new Response(false, "RECEIVED INVALID COMMAND");
-                sendResponse(response,socketChannel);
-                try
-                {
-                    NewCommandProducer.commandQueueLock.lock();
-                    NewCommandProducer.commandQueue.remove(command);
-                    NewCommandProducer.commandQueueSlot.release();
-                }
-                finally
-                {
-                    NewCommandProducer.commandQueueLock.unlock();
-                }
-        }
-    }
-
-    public static void sendResponse(Response response, SocketChannel socketChannel)
-    {
-        try
-        {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socketChannel.socket().getOutputStream());
-            objectOutputStream.writeObject(response);
-        }
-        catch(IOException exception)
-        {
-            exception.printStackTrace();
-        }
-    }
-
     public static class ProcessListCommand implements Runnable
     {
-        private Command command;
-        private SocketChannel socketChannel;
+        public ServeCommand serveCommand;
+        public Command command;
 
-        public ProcessListCommand(Command command, SocketChannel socketChannel)
+        public ProcessListCommand(ServeCommand serveCommand, Command command)
         {
+            this.serveCommand = serveCommand;
             this.command = command;
-            this.socketChannel = socketChannel;
         }
         public void run()
         {
             try
             {
+                //GENERATE RESPONSE
                 Response response = new Response(true, "RECEIVED LIST COMMAND");
-                sendResponse(response,socketChannel);
+                serveCommand.client.objectOutputStream.writeObject(response);
+                serveCommand.client.objectOutputStream.flush();
                 try
                 {
-                    NewCommandProducer.commandQueueLock.lock();
-                    NewCommandProducer.commandQueue.remove(command);
-                    NewCommandProducer.commandQueueSlot.release();
+                    serveCommand.client.commandQueueLock.lock();
+                    serveCommand.client.commandQueue.remove(serveCommand);
+                    serveCommand.client.commandQueueSlot.release();
                 }
                 finally
                 {
-                    NewCommandProducer.commandQueueLock.unlock();
+                    serveCommand.client.commandQueueLock.unlock();
                 }
             }
             catch(Exception exception)
@@ -370,29 +328,31 @@ public class Server
 
     public static class ProcessDeleteCommand implements Runnable
     {
-        private Command command;
-        private SocketChannel socketChannel;
+        public ServeCommand serveCommand;
+        public Command command;
 
-        public ProcessDeleteCommand(Command command, SocketChannel socketChannel)
+        public ProcessDeleteCommand(ServeCommand serveCommand, Command command)
         {
+            this.serveCommand = serveCommand;
             this.command = command;
-            this.socketChannel = socketChannel;
         }
         public void run()
         {
             try
             {
+                //GENERATE RESPONSE
                 Response response = new Response(true, "RECEIVED DELETE COMMAND");
-                sendResponse(response,socketChannel);
+                serveCommand.client.objectOutputStream.writeObject(response);
+                serveCommand.client.objectOutputStream.flush();
                 try
                 {
-                    NewCommandProducer.commandQueueLock.lock();
-                    NewCommandProducer.commandQueue.remove(command);
-                    NewCommandProducer.commandQueueSlot.release();
+                    serveCommand.client.commandQueueLock.lock();
+                    serveCommand.client.commandQueue.remove(serveCommand);
+                    serveCommand.client.commandQueueSlot.release();
                 }
                 finally
                 {
-                    NewCommandProducer.commandQueueLock.unlock();
+                    serveCommand.client.commandQueueLock.unlock();
                 }
             }
             catch(Exception exception)
@@ -405,29 +365,31 @@ public class Server
 
     public static class ProcessRenameCommand implements Runnable
     {
-        private Command command;
-        private SocketChannel socketChannel;
+        public ServeCommand serveCommand;
+        public Command command;
 
-        public ProcessRenameCommand(Command command, SocketChannel socketChannel)
+        public ProcessRenameCommand(ServeCommand serveCommand, Command command)
         {
+            this.serveCommand = serveCommand;
             this.command = command;
-            this.socketChannel = socketChannel;
         }
         public void run()
         {
             try
             {
+                //GENERATE RESPONSE
                 Response response = new Response(true, "RECEIVED RENAME COMMAND");
-                sendResponse(response,socketChannel);
+                serveCommand.client.objectOutputStream.writeObject(response);
+                serveCommand.client.objectOutputStream.flush();
                 try
                 {
-                    NewCommandProducer.commandQueueLock.lock();
-                    NewCommandProducer.commandQueue.remove(command);
-                    NewCommandProducer.commandQueueSlot.release();
+                    serveCommand.client.commandQueueLock.lock();
+                    serveCommand.client.commandQueue.remove(serveCommand);
+                    serveCommand.client.commandQueueSlot.release();
                 }
                 finally
                 {
-                    NewCommandProducer.commandQueueLock.unlock();
+                    serveCommand.client.commandQueueLock.unlock();
                 }
             }
             catch(Exception exception)
@@ -440,29 +402,31 @@ public class Server
 
     public static class ProcessDownloadCommand implements Runnable
     {
-        private Command command;
-        private SocketChannel socketChannel;
+        public ServeCommand serveCommand;
+        public Command command;
 
-        public ProcessDownloadCommand(Command command, SocketChannel socketChannel)
+        public ProcessDownloadCommand(ServeCommand serveCommand, Command command)
         {
+            this.serveCommand = serveCommand;
             this.command = command;
-            this.socketChannel = socketChannel;
         }
         public void run()
         {
             try
             {
+                //GENERATE RESPONSE
                 Response response = new Response(true, "RECEIVED DOWNLOAD COMMAND");
-                sendResponse(response,socketChannel);
+                serveCommand.client.objectOutputStream.writeObject(response);
+                serveCommand.client.objectOutputStream.flush();
                 try
                 {
-                    NewCommandProducer.commandQueueLock.lock();
-                    NewCommandProducer.commandQueue.remove(command);
-                    NewCommandProducer.commandQueueSlot.release();
+                    serveCommand.client.commandQueueLock.lock();
+                    serveCommand.client.commandQueue.remove(serveCommand);
+                    serveCommand.client.commandQueueSlot.release();
                 }
                 finally
                 {
-                    NewCommandProducer.commandQueueLock.unlock();
+                    serveCommand.client.commandQueueLock.unlock();
                 }
             }
             catch(Exception exception)
@@ -475,29 +439,31 @@ public class Server
 
     public static class ProcessUploadCommand implements Runnable
     {
-        private Command command;
-        private SocketChannel socketChannel;
+        public ServeCommand serveCommand;
+        public Command command;
 
-        public ProcessUploadCommand(Command command, SocketChannel socketChannel)
+        public ProcessUploadCommand(ServeCommand serveCommand, Command command)
         {
+            this.serveCommand = serveCommand;
             this.command = command;
-            this.socketChannel = socketChannel;
         }
         public void run()
         {
             try
             {
+                //GENERATE RESPONSE
                 Response response = new Response(true, "RECEIVED UPLOAD COMMAND");
-                sendResponse(response,socketChannel);
+                serveCommand.client.objectOutputStream.writeObject(response);
+                serveCommand.client.objectOutputStream.flush();
                 try
                 {
-                    NewCommandProducer.commandQueueLock.lock();
-                    NewCommandProducer.commandQueue.remove(command);
-                    NewCommandProducer.commandQueueSlot.release();
+                    serveCommand.client.commandQueueLock.lock();
+                    serveCommand.client.commandQueue.remove(serveCommand);
+                    serveCommand.client.commandQueueSlot.release();
                 }
                 finally
                 {
-                    NewCommandProducer.commandQueueLock.unlock();
+                    serveCommand.client.commandQueueLock.unlock();
                 }
             }
             catch(Exception exception)

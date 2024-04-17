@@ -3,6 +3,7 @@ package com.newlin.application;
 public enum Actions
 {
     STARTUP(0),
+    INVALID(0),
     CONNECT(1),
     QUIT(0),
     FORCE_QUIT(0),
