@@ -17,7 +17,7 @@ public class Client
 {
     public static final int MAX_REQUESTS = 3;
 
-    public static final int NUM_THREADS = 3 + MAX_REQUESTS;
+    public static final int NUM_THREADS = 4 + MAX_REQUESTS;
 
     public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NUM_THREADS);
 
@@ -33,6 +33,18 @@ public class Client
     public static ReentrantLock isConnectedLock = new ReentrantLock();
 
     public static SocketChannel socketChannel;
+
+    static
+    {
+        try
+        {
+            socketChannel = SocketChannel.open();
+        }
+        catch (IOException exception)
+        {
+            throw new RuntimeException(exception);
+        }
+    }
 
     public static void main(String[] args)
     {
@@ -60,6 +72,7 @@ public class Client
 
             //CREATES AN ACTIVE THREAD FOR ACCEPTING AND PROCESSING USER INPUT
             EXECUTOR.submit(new UserInputListener());
+
         }
         catch(Exception exception)
         {
@@ -163,7 +176,7 @@ public class Client
                         case "CONNECT":
                             System.out.println("TYPE IP ADDRESS TO CONNECT TO: ");
                             String DESTINATION_IP = scanner.nextLine();
-                            socketChannel.connect(new InetSocketAddress(DESTINATION_IP, LISTENING_PORT));
+                            socketChannel.connect(new InetSocketAddress(DESTINATION_IP,LISTENING_PORT));
                             if (socketChannel.isConnected())
                             {
                                 try
@@ -193,7 +206,7 @@ public class Client
                     }
                 }
                 while(!isConnected);
-                try(SocketChannel socketChannel = SocketChannel.open())
+                try
                 {
                     do
                     {
