@@ -4,8 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Optimized imports&#10;Fixed Client.NUM_THREADS">
+    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Doesn't work :)">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Processor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/ServeIncomingRequest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/ServeOutgoingRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Actions.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Command.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Response.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Server.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,12 +138,12 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Server (1)" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+    <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.newlin.application.Server" />
-      <module name="File-Server-Program.main" />
+      <module name="File-Server-Program.test" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.newlin.application.*" />
+          <option name="PATTERN" value=".*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -144,10 +153,10 @@
     </configuration>
     <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.newlin.application.Server" />
-      <module name="File-Server-Program.test" />
+      <module name="File-Server-Program.main" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value=".*" />
+          <option name="PATTERN" value="com.newlin.application.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
@@ -206,7 +215,31 @@
       <option name="project" value="LOCAL" />
       <updated>1713317899023</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Small changes">
+      <option name="closed" value="true" />
+      <created>1713321456048</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1713321456048</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Fixed issue with SocketChannel closing">
+      <option name="closed" value="true" />
+      <created>1713321926012</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1713321926012</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Doesn't work :)">
+      <option name="closed" value="true" />
+      <created>1713386858780</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1713386858780</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -225,6 +258,9 @@
     <MESSAGE value="Added README.md" />
     <MESSAGE value="Removed unnecessary classes&#10;Rebuilt Client and Server to be fundamentally different from each other&#10;Updated README" />
     <MESSAGE value="Optimized imports&#10;Fixed Client.NUM_THREADS" />
-    <option name="LAST_COMMIT_MESSAGE" value="Optimized imports&#10;Fixed Client.NUM_THREADS" />
+    <MESSAGE value="Small changes" />
+    <MESSAGE value="Fixed issue with SocketChannel closing" />
+    <MESSAGE value="Doesn't work :)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Doesn't work :)" />
   </component>
 </project>

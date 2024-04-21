@@ -47,9 +47,9 @@ public class Response implements Serializable
     public String toString()
     {
         String responseString = "";
-        for(int i = 1; i <= response.length; i++)
+        for(int i = 0; i < response.length; i++)
         {
-            responseString = responseString.concat("RESPONSE" + i + "= ").concat(response[i].concat("\n"));
+            responseString = responseString.concat("RESPONSE: ").concat(response[i].concat("\n"));
         }
         return"SUCCESS: " + success + "\n" + responseString;
     }
