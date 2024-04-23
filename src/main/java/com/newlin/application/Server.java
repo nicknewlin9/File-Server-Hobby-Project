@@ -59,13 +59,15 @@ public class Server
     {
         try
         {
+            Thread.sleep(2000);
             System.out.print("[SERVER] STARTING SERVER");
-            Thread.sleep(1000);
+            Thread.sleep(500);
             System.out.print(".");
-            Thread.sleep(1000);
+            Thread.sleep(500);
             System.out.print(".");
-            Thread.sleep(1000);
+            Thread.sleep(500);
             System.out.print(".\n");
+            Thread.sleep(500);
 
             EXECUTOR.submit(new AcceptIncomingRequests());
         }

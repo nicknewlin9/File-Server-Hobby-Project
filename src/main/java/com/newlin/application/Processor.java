@@ -2,7 +2,6 @@ package com.newlin.application;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.concurrent.ExecutionException;
 
 public class Processor implements Runnable
 {
@@ -46,7 +45,8 @@ public class Processor implements Runnable
         }
         finally
         {
-            Server.queueSlot.release();
+            //Server.queueSlot.release();
+            Server.commandSlot.release();
         }
     }
 
@@ -55,6 +55,7 @@ public class Processor implements Runnable
         Response response = new Response(false, "[SERVER] COULDN'T PROCESS LIST COMMAND");
         try
         {
+            Thread.sleep(10000);
             //GENERATE RESPONSE
             response = new Response(true, "[SERVER] RECEIVED LIST COMMAND");
         }

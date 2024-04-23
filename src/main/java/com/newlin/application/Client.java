@@ -66,16 +66,32 @@ public class Client
     {
         try
         {
+            Thread.sleep(2000);
             System.out.print("[CLIENT] STARTING CLIENT");
-            Thread.sleep(1000);
+            Thread.sleep(500);
             System.out.print(".");
-            Thread.sleep(1000);
+            Thread.sleep(500);
             System.out.print(".");
-            Thread.sleep(1000);
+            Thread.sleep(500);
             System.out.print(".\n");
+            Thread.sleep(500);
 
+            connect();
+        }
+        catch(InterruptedException exception)
+        {
+            System.err.println("[CLIENT] EXCEPTION DURING STARTUP");
+            exception.printStackTrace();
+            System.exit(0);
+        }
+    }
+    public static void connect() throws InterruptedException
+    {
+        try
+        {
             do
             {
+                Thread.sleep(1000);
                 System.out.println("\n[CLIENT] ENTER A COMMAND: ");
                 switch (scanner.nextLine().toUpperCase())
                 {
@@ -122,17 +138,10 @@ public class Client
             }
             while(!isConnected);
         }
-        catch(InterruptedException exception)
-        {
-            System.err.println("[CLIENT] EXCEPTION DURING STARTUP");
-            exception.printStackTrace();
-            System.exit(0);
-        }
         catch(IOException exception)
         {
             System.err.println("[CLIENT] COULDN'T CONNECT TO: " + DESTINATION_IP);
-            exception.printStackTrace();
-            System.exit(0);
+            connect();
         }
         catch(ClassNotFoundException exception)
         {
@@ -179,6 +188,7 @@ public class Client
                         return; //SKIPS TO FINALLY BLOCK
                     }
                     queueSlot.acquire();
+                    Thread.sleep(1000);
                     System.out.println("\n[CLIENT] ENTER A COMMAND: ");
                     switch(scanner.nextLine().toUpperCase())
                     {

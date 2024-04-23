@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ServeIncomingRequest implements Runnable
@@ -58,6 +57,7 @@ public class ServeIncomingRequest implements Runnable
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
                 }
+                Server.commandSlot.release();
             }
             while(isConnected)
             {
@@ -75,6 +75,9 @@ public class ServeIncomingRequest implements Runnable
                     return; //SKIPS TO FINALLY BLOCK
                 }
                 Command receivedCommand = (Command) objectInputStream.readObject();
+                System.out.println("RECEIVED COMMAND: " + receivedCommand.getAction());
+                System.out.println("COMMAND SLOTS: " + Server.commandSlot.availablePermits()); //SLAY;ALSDKJFA;LSDKFJA;LSDKFJ;lkjdf;alskdjfa;lsdkfj
+                System.out.println("CLIENT SLOTS: " + Server.queueSlot.availablePermits());
                 Server.commandSlot.acquire();
                 System.out.println("[SERVER] RECEIVED COMMAND: " + receivedCommand.getAction() + " FROM: " + clientName);
                 Server.EXECUTOR.submit(new Processor(receivedCommand, objectOutputStream));
