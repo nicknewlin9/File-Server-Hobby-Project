@@ -3,12 +3,15 @@ package com.newlin.application;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static com.newlin.application.Client.scanner;
 
 public class Server
 {
@@ -31,7 +34,7 @@ public class Server
         {
             startup();
 
-            System.out.println("[SERVER] SERVER OPEN AND LISTENING ON PORT: " + LISTENING_PORT);
+            System.out.println(log("SERVER OPEN AND LISTENING ON PORT: " + LISTENING_PORT));
 
             EXECUTOR.submit(new UserInputListener());
 
@@ -49,7 +52,7 @@ public class Server
         }
         catch(InterruptedException exception)
         {
-            System.err.println("[SERVER] EXCEPTION IN MAIN THREAD");
+            System.err.println(log("EXCEPTION IN MAIN THREAD"));
             exception.printStackTrace();
             System.exit(0);
         }
@@ -60,7 +63,7 @@ public class Server
         try
         {
             Thread.sleep(2000);
-            System.out.print("[SERVER] STARTING SERVER");
+            System.out.print("STARTING SERVER");
             Thread.sleep(500);
             System.out.print(".");
             Thread.sleep(500);
@@ -73,7 +76,7 @@ public class Server
         }
         catch(InterruptedException exception)
         {
-            System.err.println("[SERVER] EXCEPTION DURING STARTUP");
+            System.err.println(log("EXCEPTION DURING STARTUP"));
             exception.printStackTrace();
             System.exit(0);
         }
@@ -83,7 +86,7 @@ public class Server
     {
         try
         {
-            System.err.print("[SERVER] SHUTTING DOWN");
+            System.err.print(log("SHUTTING DOWN"));
             Thread.sleep(1000);
             System.err.print(".");
             Thread.sleep(1000);
@@ -96,10 +99,26 @@ public class Server
         }
         catch(InterruptedException exception)
         {
-            System.err.println("[SERVER] EXCEPTION DURING SHUTDOWN");
+            System.err.println(log("EXCEPTION DURING SHUTDOWN"));
             exception.printStackTrace();
             System.exit(0);
         }
+    }
+
+    public static String log(String string)
+    {
+        String month = String.format("%02d", LocalDateTime.now().getMonthValue());
+        String day = String.format("%02d", LocalDateTime.now().getDayOfMonth());
+        String year = String.format("%02d", LocalDateTime.now().getYear());
+        String date = month + "/" + day + "/" + year;
+
+        String hour = String.format("%02d", LocalDateTime.now().getHour());
+        String minute = String.format("%02d", LocalDateTime.now().getMinute());
+        String second = String.format("%02d", LocalDateTime.now().getSecond());
+        String time = hour + ":" + minute + ":" + second;
+
+        String DateTime = date + " " + time;
+        return "[" + DateTime + "] [SERVER] " + string;
     }
 
     public static class UserInputListener implements Runnable
@@ -110,7 +129,7 @@ public class Server
             {
                 while(isOnline)
                 {
-                    System.out.println("\n[SERVER] ENTER A COMMAND: ");
+                    System.out.println(log("ENTER A COMMAND: "));
                     switch(scanner.nextLine().toUpperCase())
                     {
                         case "QUIT":
@@ -121,7 +140,7 @@ public class Server
                             break;
 
                         default:
-                            System.out.println("\n[SERVER] VALID COMMANDS: \"QUIT\" OR \"FORCE QUIT\"");
+                            System.out.println(log("VALID COMMANDS: \"QUIT\" OR \"FORCE QUIT\""));
                             break;
                     }
                 }
@@ -178,13 +197,13 @@ public class Server
 
                     queueSlot.acquire();
                     Socket socket = incomingConnectionsListenSocket.accept();
-                    System.out.println("[SERVER] NEW CONNECTION FROM: " + socket.getInetAddress().getHostName());
+                    System.out.println(log("NEW CONNECTION FROM: " + socket.getInetAddress().getHostName()));
                     EXECUTOR.submit(new ServeIncomingRequest(socket));
                 }
             }
             catch(InterruptedException | IOException exception)
             {
-                System.err.println("[SERVER] EXCEPTION IN ACCEPT INCOMING REQUESTS THREAD");
+                System.err.println(log("EXCEPTION IN ACCEPT INCOMING REQUESTS THREAD"));
                 exception.printStackTrace();
             }
             finally

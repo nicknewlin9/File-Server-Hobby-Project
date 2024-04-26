@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,7 +28,6 @@ public class Client
     public static boolean isConnected = false;
     public static ReentrantLock isConnectedLock = new ReentrantLock();
     public static Condition disconnected = isConnectedLock.newCondition();
-    public static Condition commandTyped = isConnectedLock.newCondition();
     public static String DESTINATION_IP;
     public static Command CURRENT_COMMAND = new Command(Command.Actions.STARTUP);
 
@@ -37,7 +37,7 @@ public class Client
         {
             startup();
 
-            System.out.println("[CLIENT] CONNECTED TO: " + DESTINATION_IP);
+            System.out.println(log("CONNECTED TO: " + DESTINATION_IP));
 
             EXECUTOR.submit(new UserInputListener());
 
@@ -45,7 +45,7 @@ public class Client
             {
                 isConnectedLock.lock();
                 disconnected.await();
-                System.out.println("[CLIENT] DISCONNECTED");
+                System.out.println(log("DISCONNECTED"));
             }
             finally
             {
@@ -56,7 +56,7 @@ public class Client
         }
         catch(InterruptedException exception)
         {
-            System.err.println("[CLIENT] EXCEPTION IN MAIN THREAD");
+            System.err.println(log("EXCEPTION IN MAIN THREAD"));
             exception.printStackTrace();
             System.exit(0);
         }
@@ -67,7 +67,7 @@ public class Client
         try
         {
             Thread.sleep(2000);
-            System.out.print("[CLIENT] STARTING CLIENT");
+            System.out.print("STARTING CLIENT");
             Thread.sleep(500);
             System.out.print(".");
             Thread.sleep(500);
@@ -80,7 +80,7 @@ public class Client
         }
         catch(InterruptedException exception)
         {
-            System.err.println("[CLIENT] EXCEPTION DURING STARTUP");
+            System.err.println(log("EXCEPTION DURING STARTUP"));
             exception.printStackTrace();
             System.exit(0);
         }
@@ -91,12 +91,11 @@ public class Client
         {
             do
             {
-                Thread.sleep(1000);
-                System.out.println("\n[CLIENT] ENTER A COMMAND: ");
+                System.out.println(log("ENTER A COMMAND: "));
                 switch (scanner.nextLine().toUpperCase())
                 {
                     case "CONNECT":
-                        System.out.println("[CLIENT] TYPE IP ADDRESS TO CONNECT TO: ");
+                        System.out.println(log("TYPE IP ADDRESS TO CONNECT TO: "));
                         DESTINATION_IP = scanner.nextLine();
                         socket = new Socket();
                         socket.connect(new InetSocketAddress(DESTINATION_IP,LISTENING_PORT));
@@ -120,7 +119,7 @@ public class Client
                             Response receivedResponse = (Response) objectInputStream.readObject();
 
                             //PROCESS RESPONSE
-                            System.out.println(receivedResponse);
+                            System.out.println(receivedResponse.getResponse()[0]);
                         }
                         break;
 
@@ -132,7 +131,7 @@ public class Client
                         break;
 
                     default:
-                        System.out.println("\n[CLIENT] VALID COMMANDS: \"CONNECT\" \"QUIT\" OR \"FORCE QUIT\"");
+                        System.out.println(log("VALID COMMANDS: \"CONNECT\" \"QUIT\" OR \"FORCE QUIT\""));
                         break;
                 }
             }
@@ -140,12 +139,12 @@ public class Client
         }
         catch(IOException exception)
         {
-            System.err.println("[CLIENT] COULDN'T CONNECT TO: " + DESTINATION_IP);
+            System.err.println(log("COULDN'T CONNECT TO: " + DESTINATION_IP));
             connect();
         }
         catch(ClassNotFoundException exception)
         {
-            System.err.println("[CLIENT] EXCEPTION WHILE SENDING PING TO SERVER (ESTABLISHING I/O STREAMS FOR THE SOCKET)");
+            System.err.println(log("EXCEPTION WHILE SENDING PING TO SERVER (ESTABLISHING I/O STREAMS FOR THE SOCKET)"));
             exception.printStackTrace();
             System.exit(0);
         }
@@ -155,7 +154,7 @@ public class Client
     {
         try
         {
-            System.err.print("[CLIENT] SHUTTING DOWN");
+            System.err.print(log("SHUTTING DOWN"));
             Thread.sleep(1000);
             System.err.print(".");
             Thread.sleep(1000);
@@ -168,10 +167,26 @@ public class Client
         }
         catch(InterruptedException exception)
         {
-            System.err.println("[CLIENT] EXCEPTION DURING SHUTDOWN");
+            System.err.println(log("EXCEPTION DURING SHUTDOWN"));
             exception.printStackTrace();
             System.exit(0);
         }
+    }
+
+    public static String log(String string)
+    {
+        String month = String.format("%02d", LocalDateTime.now().getMonthValue());
+        String day = String.format("%02d", LocalDateTime.now().getDayOfMonth());
+        String year = String.format("%02d", LocalDateTime.now().getYear());
+        String date = month + "/" + day + "/" + year;
+
+        String hour = String.format("%02d", LocalDateTime.now().getHour());
+        String minute = String.format("%02d", LocalDateTime.now().getMinute());
+        String second = String.format("%02d", LocalDateTime.now().getSecond());
+        String time = hour + ":" + minute + ":" + second;
+
+        String DateTime = date + " " + time;
+        return "[" + DateTime + "] [CLIENT] " + string;
     }
 
     public static class UserInputListener implements Runnable
@@ -188,8 +203,7 @@ public class Client
                         return; //SKIPS TO FINALLY BLOCK
                     }
                     queueSlot.acquire();
-                    Thread.sleep(1000);
-                    System.out.println("\n[CLIENT] ENTER A COMMAND: ");
+                    System.out.println(log("ENTER A COMMAND: "));
                     switch(scanner.nextLine().toUpperCase())
                     {
                         case "QUIT":
@@ -205,44 +219,44 @@ public class Client
                             break;
 
                         case "DELETE":
-                            System.out.println("[CLIENT] FILENAME TO DELETE: ");
+                            System.out.println(log("FILENAME TO DELETE: "));
                             String filenameToDelete = scanner.nextLine();
                             CURRENT_COMMAND = new Command(Command.Actions.DELETE,filenameToDelete);
                             EXECUTOR.submit(new ServeOutgoingRequest(CURRENT_COMMAND));
                             break;
 
                         case "RENAME":
-                            System.out.println("[CLIENT] FILENAME TO RENAME: ");
+                            System.out.println(log("FILENAME TO RENAME: "));
                             String filenameToRename = scanner.nextLine();
-                            System.out.println("[CLIENT] NEW FILENAME: ");
+                            System.out.println(log("NEW FILENAME: "));
                             String newFilename = scanner.nextLine();
                             CURRENT_COMMAND = new Command(Command.Actions.RENAME,filenameToRename,newFilename);
                             EXECUTOR.submit(new ServeOutgoingRequest(CURRENT_COMMAND));
                             break;
 
                         case "DOWNLOAD":
-                            System.out.println("[CLIENT] FILENAME TO DOWNLOAD: ");
+                            System.out.println(log("FILENAME TO DOWNLOAD: "));
                             String filenameToDownload = scanner.nextLine();
                             CURRENT_COMMAND = new Command(Command.Actions.DOWNLOAD,filenameToDownload);
                             EXECUTOR.submit(new ServeOutgoingRequest(CURRENT_COMMAND));
                             break;
 
                         case "UPLOAD":
-                            System.out.println("[CLIENT] FILENAME TO UPLOAD: ");
+                            System.out.println(log("FILENAME TO UPLOAD: "));
                             String filenameToUpload = scanner.nextLine();
                             CURRENT_COMMAND = new Command(Command.Actions.UPLOAD,filenameToUpload);
                             EXECUTOR.submit(new ServeOutgoingRequest(CURRENT_COMMAND));
                             break;
 
                         default:
-                            System.out.println("\n[CLIENT] VALID COMMANDS: \"LIST\" \"DELETE\" \"RENAME\" \"DOWNLOAD\" \"UPLOAD\" \"QUIT\" OR \"FORCE QUIT\"");
+                            System.out.println(log("VALID COMMANDS: \"LIST\" \"DELETE\" \"RENAME\" \"DOWNLOAD\" \"UPLOAD\" \"QUIT\" OR \"FORCE QUIT\""));
                             break;
                     }
                 }
             }
             catch(InterruptedException exception)
             {
-                System.err.println("[CLIENT] EXCEPTION IN USER INPUT THREAD");
+                System.err.println(log("EXCEPTION IN USER INPUT THREAD"));
                 exception.printStackTrace();
             }
             finally

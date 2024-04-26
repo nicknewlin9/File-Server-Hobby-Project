@@ -18,11 +18,11 @@ public class ServeOutgoingRequest implements Runnable
             Response receivedResponse = (Response) Client.objectInputStream.readObject();
 
             //PROCESS RESPONSE
-            System.out.println(receivedResponse);
+            System.out.println(receivedResponse.getResponse()[0]);
         }
         catch(IOException | ClassNotFoundException exception)
         {
-            System.err.println("[CLIENT] EXCEPTION IN SERVE OUTGOING REQUEST THREAD");
+            System.err.println(Client.log("EXCEPTION IN SERVE OUTGOING REQUEST THREAD"));
             exception.printStackTrace();
         }
         finally

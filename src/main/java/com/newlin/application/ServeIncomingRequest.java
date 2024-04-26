@@ -45,14 +45,14 @@ public class ServeIncomingRequest implements Runnable
 
                 if(receivedCommand.getAction() == Command.Actions.CONNECT)
                 {
-                    Response response = new Response(true, "[SERVER] CONNECTED SUCCESSFULLY");
+                    Response response = new Response(true, Server.log("CONNECTED SUCCESSFULLY"));
                     objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
                 }
                 else if(receivedCommand.getAction() != Command.Actions.CONNECT)
                 {
-                    Response response = new Response(true, "[SERVER] RECEIVED INVALID COMMAND");
+                    Response response = new Response(true, Server.log("RECEIVED INVALID COMMAND"));
                     objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
@@ -75,21 +75,18 @@ public class ServeIncomingRequest implements Runnable
                     return; //SKIPS TO FINALLY BLOCK
                 }
                 Command receivedCommand = (Command) objectInputStream.readObject();
-                System.out.println("RECEIVED COMMAND: " + receivedCommand.getAction());
-                System.out.println("COMMAND SLOTS: " + Server.commandSlot.availablePermits()); //SLAY;ALSDKJFA;LSDKFJA;LSDKFJ;lkjdf;alskdjfa;lsdkfj
-                System.out.println("CLIENT SLOTS: " + Server.queueSlot.availablePermits());
                 Server.commandSlot.acquire();
-                System.out.println("[SERVER] RECEIVED COMMAND: " + receivedCommand.getAction() + " FROM: " + clientName);
+                System.out.println(Server.log("RECEIVED COMMAND: " + receivedCommand.getAction() + " FROM: " + clientName));
                 Server.EXECUTOR.submit(new Processor(receivedCommand, objectOutputStream));
             }
         }
         catch(EOFException exception)
         {
-            System.out.println("[SERVER] CLIENT: " + clientName + " DISCONNECTED");
+            System.out.println(Server.log("CLIENT: " + clientName + " DISCONNECTED"));
         }
         catch(IOException | ClassNotFoundException | InterruptedException exception)
         {
-            System.err.println("[SERVER] EXCEPTION IN SERVE INCOMING REQUEST THREAD");
+            System.err.println(Server.log("EXCEPTION IN SERVE INCOMING REQUEST THREAD"));
             exception.printStackTrace();
         }
         finally

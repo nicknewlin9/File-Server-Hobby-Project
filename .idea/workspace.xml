@@ -9,6 +9,7 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Processor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Processor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/ServeIncomingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/ServeIncomingRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/ServeOutgoingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/ServeOutgoingRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Server.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -104,7 +105,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Client">
+  <component name="RunManager" selected="Application.Server (1)">
     <configuration name="Application" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.newlin.application.Application" />
       <module name="File-Server-Program.main" />
