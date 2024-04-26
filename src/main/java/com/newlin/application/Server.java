@@ -11,8 +11,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.newlin.application.Client.scanner;
-
 public class Server
 {
     public static final int MAX_CLIENTS = 3;

@@ -1,5 +1,6 @@
 package com.newlin.application;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
