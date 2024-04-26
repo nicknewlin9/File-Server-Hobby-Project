@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Removed unused print statements and added a log function that returns a nicely structured date/time string for printing to the console">
+    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Last commit for first iteration">
       <change afterPath="$PROJECT_DIR$/local/local_file.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/remote/remote_file.txtt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/remote/remote_file.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -255,7 +254,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714105738358</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Last commit for first iteration">
+      <option name="closed" value="true" />
+      <created>1714161575293</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1714161575293</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -278,6 +285,7 @@
     <MESSAGE value="Fixed issue with SocketChannel closing" />
     <MESSAGE value="Doesn't work :)" />
     <MESSAGE value="Removed unused print statements and added a log function that returns a nicely structured date/time string for printing to the console" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed unused print statements and added a log function that returns a nicely structured date/time string for printing to the console" />
+    <MESSAGE value="Last commit for first iteration" />
+    <option name="LAST_COMMIT_MESSAGE" value="Last commit for first iteration" />
   </component>
 </project>
