@@ -1,6 +1,9 @@
-package com.newlin.application;
+package com.newlin.application.client;
 
-import java.awt.*;
+import com.newlin.application.Command;
+import com.newlin.application.Response;
+import com.newlin.application.server.Server;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;

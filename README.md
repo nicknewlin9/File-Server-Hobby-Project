@@ -12,6 +12,9 @@
 #### - Configure Server and Client to use minimum number of threads for the thread pool
 #### - Suppress warnings
 #### - Identify and label fatal exceptions, then initiate the graceful shutdown
-#### - Implement
+#### - Implement file system functionality
 ## Third Iteration - future plans
 #### - Implement a GUI probably with Java Swing or JavaFX
+#### - Provide documentation within source code
+#### - Separate client and server programs into different applications
+#### - Add code in the server startup that generates a log file that logs actions on the server

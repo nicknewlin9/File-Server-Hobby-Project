@@ -1,4 +1,7 @@
-package com.newlin.application;
+package com.newlin.application.client;
+
+import com.newlin.application.Command;
+import com.newlin.application.Response;
 
 import java.io.IOException;
 

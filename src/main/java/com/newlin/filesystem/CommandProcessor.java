@@ -1,54 +1,11 @@
-package com.newlin.application;
+package com.newlin.filesystem;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import com.newlin.application.Command;
+import com.newlin.application.Response;
+import com.newlin.application.server.Server;
 
-public class Processor implements Runnable
+public class CommandProcessor
 {
-    public Command command;
-    public ObjectOutputStream objectOutputStream;
-
-    public Processor(Command command, ObjectOutputStream objectOutputStream)
-    {
-        this.command = command;
-        this.objectOutputStream = objectOutputStream;
-    }
-
-    public void run()
-    {
-        try
-        {
-            System.out.println(Server.log("NOW PROCESSING " + command.getAction() + " COMMAND"));
-            Response response = switch (command.getAction())
-            {
-                case Command.Actions.CONNECT -> new Response(true, Server.log("CONNECTED SUCCESSFULLY"));
-
-                case Command.Actions.LIST -> ProcessListCommand(command);
-
-                case Command.Actions.DELETE -> ProcessDeleteCommand(command);
-
-                case Command.Actions.RENAME -> ProcessRenameCommand(command);
-
-                case Command.Actions.DOWNLOAD -> ProcessDownloadCommand(command);
-
-                case Command.Actions.UPLOAD -> ProcessUploadCommand(command);
-
-                default -> new Response(false, Server.log("RECEIVED INVALID COMMAND"));
-            };
-            objectOutputStream.writeObject(response);
-            objectOutputStream.flush();
-        }
-        catch(IOException exception)
-        {
-            System.err.println(Server.log("EXCEPTION IN THREAD PROCESSING COMMAND"));
-            exception.printStackTrace();
-        }
-        finally
-        {
-            Server.commandSlot.release();
-        }
-    }
-
     public static Response ProcessListCommand(Command command)
     {
         Response response = new Response(false, Server.log("COULDN'T PROCESS LIST COMMAND"));

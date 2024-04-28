@@ -1,4 +1,4 @@
-package com.newlin.application;
+package com.newlin.application.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
