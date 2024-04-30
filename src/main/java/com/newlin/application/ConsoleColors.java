@@ -1,5 +1,6 @@
 package com.newlin.application;
 
+@SuppressWarnings("unused")
 public enum ConsoleColors
 {
     RESET("\u001B[0m"),
@@ -18,6 +19,7 @@ public enum ConsoleColors
     {
         this.code = code;
     }
+
     public String getCode()
     {
         return this.code;

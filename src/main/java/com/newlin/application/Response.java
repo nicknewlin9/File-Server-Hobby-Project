@@ -2,12 +2,13 @@ package com.newlin.application;
 
 import java.io.Serializable;
 
+@SuppressWarnings("unused")
 public class Response implements Serializable
 {
     private boolean success;
-    private String[] response;
+    private Serializable response;
 
-    public Response(boolean success, String... response)
+    public Response(boolean success, Serializable response)
     {
         this.success = success;
         this.response = response;
@@ -23,7 +24,7 @@ public class Response implements Serializable
         return success;
     }
 
-    public String[] getResponse()
+    public Serializable getResponse()
     {
         return response;
     }
@@ -33,7 +34,7 @@ public class Response implements Serializable
         this.success = success;
     }
 
-    public void setResponse(String[] response)
+    public void setResponse(Serializable response)
     {
         this.response = response;
     }
@@ -41,16 +42,5 @@ public class Response implements Serializable
     public boolean equals(boolean success)
     {
         return success == this.success;
-    }
-
-    @Override
-    public String toString()
-    {
-        String responseString = "";
-        for(int i = 0; i < response.length; i++)
-        {
-            responseString = responseString.concat("RESPONSE: ").concat(response[i].concat("\n"));
-        }
-        return"SUCCESS: " + success + "\n" + responseString;
     }
 }

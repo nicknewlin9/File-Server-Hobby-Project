@@ -10,7 +10,6 @@
 #### - Add graceful shutdown for Client and Server
 #### - Add a check to client input listener to check for available queue slot before prompting for command
 #### - Configure Server and Client to use minimum number of threads for the thread pool
-#### - Suppress warnings
 #### - Identify and label fatal exceptions, then initiate the graceful shutdown
 #### - Implement file system functionality
 ## Third Iteration - future plans

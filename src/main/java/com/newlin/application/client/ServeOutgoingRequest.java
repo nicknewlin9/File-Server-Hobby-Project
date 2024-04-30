@@ -2,7 +2,7 @@ package com.newlin.application.client;
 
 import com.newlin.application.Command;
 import com.newlin.application.Response;
-
+import com.newlin.filesystem.FileNode;
 import java.io.IOException;
 
 public class ServeOutgoingRequest implements Runnable
@@ -13,6 +13,7 @@ public class ServeOutgoingRequest implements Runnable
     {
         this.command = command;
     }
+
     public void run()
     {
         try
@@ -21,7 +22,14 @@ public class ServeOutgoingRequest implements Runnable
             Response receivedResponse = (Response) Client.objectInputStream.readObject();
 
             //PROCESS RESPONSE
-            System.out.println(receivedResponse.getResponse()[0]);
+            if(receivedResponse.getResponse() instanceof FileNode response)
+            {
+                response.printAll();
+            }
+            else
+            {
+                System.out.println(receivedResponse.getResponse());
+            }
         }
         catch(IOException | ClassNotFoundException exception)
         {

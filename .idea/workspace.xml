@@ -4,23 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Added two test files for starting iteration 2">
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/remote/logs/test_log.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/ConsoleColors.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/CommandProcessor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/Node.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/ListCommandTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Deleted Processor class &#10;Restructured project packages">
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/FileSystem.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/FileSystemTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local/local_file.txt" beforeDir="false" afterPath="$PROJECT_DIR$/local/local_file.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/remote/remote_file.txt" beforeDir="false" afterPath="$PROJECT_DIR$/remote/remote_file.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Processor.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/ServeIncomingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeIncomingRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/ServeOutgoingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ServeOutgoingRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Command.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/ConsoleColors.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/ConsoleColors.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Response.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ServeOutgoingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ServeOutgoingRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeIncomingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeIncomingRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/CommandProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/CommandProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/FileNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ListCommandTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ListCommandTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,20 +96,32 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.Client.executor": "Run",
+    "Application.PathSorter.executor": "Run",
+    "Application.Server.executor": "Run",
     "Gradle.File-Server-Program [:Application.main()].executor": "Run",
     "Gradle.File-Server-Program [:Client.main()].executor": "Run",
     "Gradle.File-Server-Program [:ListCommandTest.main()].executor": "Run",
     "Gradle.File-Server-Program [:Main.main()].executor": "Run",
     "Gradle.File-Server-Program [:Server.main()].executor": "Run",
+    "Gradle.FileSystemTest.createDefaultDirectories.executor": "Run",
+    "Gradle.FileSystemTest.createFileStructure.executor": "Run",
     "Gradle.ListCommandTest.executor": "Run",
     "Gradle.ListCommandTest.poopy.executor": "Run",
     "Gradle.ListCommandTest.remote_file_exists.executor": "Run",
     "Gradle.ListCommandTest.slay.executor": "Run",
+    "JUnit.FileSystemTest.createDefaultDirectories.executor": "Run",
+    "JUnit.FileSystemTest.createFileStructure.executor": "Run",
+    "JUnit.FileSystemTest.createTestFiles.executor": "Run",
+    "JUnit.FileSystemTest.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/nicholasnewlin/Desktop/File-Server-Program/src/main/java",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
     "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
   }
 }]]></component>
@@ -121,7 +133,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Server">
+  <component name="RunManager" selected="JUnit.FileSystemTest.createFileStructure">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.newlin.application.client.Client" />
       <module name="File-Server-Program.main" />
@@ -131,6 +143,13 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PathSorter" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="PathSorter" />
+      <module name="File-Server-Program.test" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -161,85 +180,33 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ListCommandTest" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;ListCommandTest&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
+    <configuration name="FileSystemTest.createDefaultDirectories" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="File-Server-Program.test" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="FileSystemTest" />
+      <option name="METHOD_NAME" value="createDefaultDirectories" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
-    <configuration name="ListCommandTest.poopy" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;ListCommandTest.poopy&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
-    </configuration>
-    <configuration name="ListCommandTest.remote_file_exists" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value=":test" />
-            <option value="--tests" />
-            <option value="&quot;ListCommandTest.remote_file_exists&quot;" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>false</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <RunAsTest>true</RunAsTest>
-      <method v="2" />
+    <configuration name="FileSystemTest.createFileStructure" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="File-Server-Program.test" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="FileSystemTest" />
+      <option name="METHOD_NAME" value="createFileStructure" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Server" />
+        <item itemvalue="JUnit.FileSystemTest.createFileStructure" />
         <item itemvalue="Application.Client" />
-        <item itemvalue="Gradle.ListCommandTest.poopy" />
-        <item itemvalue="Gradle.ListCommandTest.remote_file_exists" />
-        <item itemvalue="Gradle.ListCommandTest" />
+        <item itemvalue="Application.Server" />
+        <item itemvalue="Application.PathSorter" />
+        <item itemvalue="JUnit.FileSystemTest.createDefaultDirectories" />
       </list>
     </recent_temporary>
   </component>
@@ -340,7 +307,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714163190695</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Deleted Processor class &#10;Restructured project packages">
+      <option name="closed" value="true" />
+      <created>1714279662247</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1714279662247</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -366,6 +341,7 @@
     <MESSAGE value="Last commit for first iteration" />
     <MESSAGE value="Updated README.md" />
     <MESSAGE value="Added two test files for starting iteration 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added two test files for starting iteration 2" />
+    <MESSAGE value="Deleted Processor class &#10;Restructured project packages" />
+    <option name="LAST_COMMIT_MESSAGE" value="Deleted Processor class &#10;Restructured project packages" />
   </component>
 </project>

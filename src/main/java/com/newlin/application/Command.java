@@ -28,6 +28,7 @@ public class Command implements Serializable
         return this.args;
     }
 
+    @SuppressWarnings("unused")
     public enum Actions
     {
         STARTUP(0),
@@ -35,7 +36,7 @@ public class Command implements Serializable
         CONNECT(1),
         QUIT(0),
         FORCE_QUIT(0),
-        LIST(0),
+        LIST(1),
         DELETE(1),
         RENAME(2),
         DOWNLOAD(1),

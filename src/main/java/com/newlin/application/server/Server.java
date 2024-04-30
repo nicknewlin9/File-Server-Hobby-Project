@@ -1,5 +1,6 @@
 package com.newlin.application.server;
 
+import com.newlin.filesystem.FileSystem;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -16,15 +17,14 @@ public class Server
     public static final int MAX_CLIENTS = 3;
     public static final int MAX_REQUESTS = 6;
     public static final int LISTENING_PORT = 3001;
-
     public static final int NUM_THREADS = 2 + MAX_CLIENTS + MAX_REQUESTS;
     public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NUM_THREADS);
-
     public static Semaphore queueSlot = new Semaphore(MAX_CLIENTS,true);
     public static Semaphore commandSlot = new Semaphore(MAX_REQUESTS,true);
     public static boolean isOnline = false;
     public static ReentrantLock isOnlineLock = new ReentrantLock();
     public static Condition offline = isOnlineLock.newCondition();
+    public static FileSystem fileSystem = new FileSystem("remote");
 
     public static void main(String[] args)
     {

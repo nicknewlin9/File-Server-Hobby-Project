@@ -3,7 +3,6 @@ package com.newlin.application.client;
 import com.newlin.application.Command;
 import com.newlin.application.Response;
 import com.newlin.application.server.Server;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,10 +19,8 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Client
 {
     public static final int LISTENING_PORT = 3001;
-
     public static final int NUM_THREADS = 4 + Server.MAX_REQUESTS;
     public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NUM_THREADS);
-
     public static Scanner scanner = new Scanner(System.in);
     public static Socket socket;
     public static ObjectOutputStream objectOutputStream;
@@ -123,7 +120,7 @@ public class Client
                             Response receivedResponse = (Response) objectInputStream.readObject();
 
                             //PROCESS RESPONSE
-                            System.out.println(receivedResponse.getResponse()[0]);
+                            System.out.println(receivedResponse.getResponse());
                         }
                         break;
 
@@ -218,7 +215,9 @@ public class Client
                             break;
 
                         case "LIST":
-                            CURRENT_COMMAND = new Command(Command.Actions.LIST);
+                            System.out.println(log("DIRECTORY: "));
+                            String directory = scanner.nextLine();
+                            CURRENT_COMMAND = new Command(Command.Actions.LIST,directory);
                             EXECUTOR.submit(new ServeOutgoingRequest(CURRENT_COMMAND));
                             break;
 

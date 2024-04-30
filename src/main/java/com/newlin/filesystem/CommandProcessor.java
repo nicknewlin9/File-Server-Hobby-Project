@@ -3,23 +3,32 @@ package com.newlin.filesystem;
 import com.newlin.application.Command;
 import com.newlin.application.Response;
 import com.newlin.application.server.Server;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class CommandProcessor
 {
     public static Response ProcessListCommand(Command command)
     {
-        Response response = new Response(false, Server.log("COULDN'T PROCESS LIST COMMAND"));
         try
         {
-            //GENERATE RESPONSE
-            response = new Response(true, Server.log("RECEIVED LIST COMMAND"));
+            String pathString = command.getArgs()[0];
+            if(pathString.equals("\n"))
+            {
+                return new Response(true, Server.fileSystem.getRootNode());
+            }
+            else
+            {
+                Path path = Paths.get(command.getArgs()[0]);
+                return new Response(true, Server.fileSystem.getRootNode());
+            }
         }
         catch(Exception exception)
         {
             System.err.println(Server.log("EXCEPTION PROCESSING LIST COMMAND"));
             exception.printStackTrace();
         }
-        return response;
+        return new Response(false, "NOT SLAY");
     }
 
     public static Response ProcessDeleteCommand(Command command)
