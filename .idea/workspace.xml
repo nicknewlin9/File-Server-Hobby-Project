@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Removed unused imports">
+    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Readded workspace.xml">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -12,17 +12,9 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExternalProjectsData">
-    <projectState path="$PROJECT_DIR$">
-      <ProjectState />
-    </projectState>
-  </component>
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
-        <task path="$PROJECT_DIR$">
-          <activation />
-        </task>
         <projects_view>
           <tree_state>
             <expand>
@@ -42,301 +34,17 @@
       </state>
     </system>
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Enum" />
-        <option value="Class" />
-      </list>
-    </option>
-  </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-  </component>
-  <component name="GitHubPullRequestSearchHistory">{
-    &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;nicknewlin9&quot;
-    }
-    }</component>
-  <component name="GithubPullRequestsUISettings">{
-    &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/nicknewlin9/File-Server-Program.git&quot;,
-    &quot;accountId&quot;: &quot;7c6e9309-b4f9-4817-9941-ea43b41e1f4d&quot;
-    }
-    }</component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectColorInfo">{
-    &quot;associatedIndex&quot;: 1
-    }</component>
-  <component name="ProjectId" id="2evVdPShmvPyl2LChgNrDlxfLYx" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
-    <option name="sortByType" value="true" />
-    <option name="sortKey" value="BY_TYPE" />
-  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Client.executor": "Run",
-    "Application.PathSorter.executor": "Run",
-    "Application.Server.executor": "Run",
-    "Gradle.File-Server-Program [:Application.main()].executor": "Run",
-    "Gradle.File-Server-Program [:Client.main()].executor": "Run",
-    "Gradle.File-Server-Program [:ListCommandTest.main()].executor": "Run",
-    "Gradle.File-Server-Program [:Main.main()].executor": "Run",
-    "Gradle.File-Server-Program [:Server.main()].executor": "Run",
-    "Gradle.FileSystemTest.createDefaultDirectories.executor": "Run",
-    "Gradle.FileSystemTest.createFileStructure.executor": "Run",
-    "Gradle.ListCommandTest.executor": "Run",
-    "Gradle.ListCommandTest.poopy.executor": "Run",
-    "Gradle.ListCommandTest.remote_file_exists.executor": "Run",
-    "Gradle.ListCommandTest.slay.executor": "Run",
-    "JUnit.FileSystemTest.createDefaultDirectories.executor": "Run",
-    "JUnit.FileSystemTest.createFileStructure.executor": "Run",
-    "JUnit.FileSystemTest.createTestFiles.executor": "Run",
-    "JUnit.FileSystemTest.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/nicholasnewlin/Desktop/File-Server-Program/src/main/java",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
+    "git-widget-placeholder": "main"
   }
 }]]></component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/src/main/java" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Application.Server">
-    <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.newlin.application.client.Client" />
-      <module name="File-Server-Program.main" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.newlin.application.client.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="PathSorter" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="PathSorter" />
-      <module name="File-Server-Program.test" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.newlin.application.server.Server" />
-      <module name="File-Server-Program.main" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.newlin.application.server.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.newlin.application.Server" />
-      <module name="File-Server-Program.main" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.newlin.application.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="FileSystemTest.createDefaultDirectories" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="File-Server-Program.test" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="FileSystemTest" />
-      <option name="METHOD_NAME" value="createDefaultDirectories" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="FileSystemTest.createFileStructure" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="File-Server-Program.test" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="FileSystemTest" />
-      <option name="METHOD_NAME" value="createFileStructure" />
-      <option name="TEST_OBJECT" value="method" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <recent_temporary>
-      <list>
-        <item itemvalue="Application.Server" />
-        <item itemvalue="JUnit.FileSystemTest.createFileStructure" />
-        <item itemvalue="Application.Client" />
-        <item itemvalue="Application.PathSorter" />
-        <item itemvalue="JUnit.FileSystemTest.createDefaultDirectories" />
-      </list>
-    </recent_temporary>
-  </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="" />
-      <created>1712784666028</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1712784666028</updated>
-    </task>
-    <task id="LOCAL-00001" summary="Rebuilt project using gradle and groovy">
-      <option name="closed" value="true" />
-      <created>1712786994567</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1712786994567</updated>
-    </task>
-    <task id="LOCAL-00002" summary="Added README.md">
-      <option name="closed" value="true" />
-      <created>1712788210713</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1712788210713</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Removed unnecessary classes&#10;Rebuilt Client and Server to be fundamentally different from each other&#10;Updated README">
-      <option name="closed" value="true" />
-      <created>1713317365137</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1713317365137</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Optimized imports&#10;Fixed Client.NUM_THREADS">
-      <option name="closed" value="true" />
-      <created>1713317899023</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1713317899023</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Small changes">
-      <option name="closed" value="true" />
-      <created>1713321456048</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1713321456048</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Fixed issue with SocketChannel closing">
-      <option name="closed" value="true" />
-      <created>1713321926012</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1713321926012</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Doesn't work :)">
-      <option name="closed" value="true" />
-      <created>1713386858780</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1713386858780</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Removed unused print statements and added a log function that returns a nicely structured date/time string for printing to the console">
-      <option name="closed" value="true" />
-      <created>1714105738358</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1714105738358</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Last commit for first iteration">
-      <option name="closed" value="true" />
-      <created>1714161575293</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1714161575293</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Updated README.md">
-      <option name="closed" value="true" />
-      <created>1714163066340</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1714163066340</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Added two test files for starting iteration 2">
-      <option name="closed" value="true" />
-      <created>1714163190695</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1714163190695</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Deleted Processor class &#10;Restructured project packages">
-      <option name="closed" value="true" />
-      <created>1714279662247</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1714279662247</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Got rid of/suppressed all warnings in the application package&#10;Added FileSystem class and heavily improved the FileNode class to be serializable&#10;Changed the Response class to have a Serializable object for it's &quot;response&quot; field instead of a String array&#10;Added the core functionality of the &quot;LIST&quot; command">
-      <option name="closed" value="true" />
-      <created>1714464902427</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1714464902427</updated>
-    </task>
-    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Rebuilt project using gradle and groovy" />
-    <MESSAGE value="Added README.md" />
-    <MESSAGE value="Removed unnecessary classes&#10;Rebuilt Client and Server to be fundamentally different from each other&#10;Updated README" />
-    <MESSAGE value="Optimized imports&#10;Fixed Client.NUM_THREADS" />
-    <MESSAGE value="Small changes" />
-    <MESSAGE value="Fixed issue with SocketChannel closing" />
-    <MESSAGE value="Doesn't work :)" />
-    <MESSAGE value="Removed unused print statements and added a log function that returns a nicely structured date/time string for printing to the console" />
-    <MESSAGE value="Last commit for first iteration" />
-    <MESSAGE value="Updated README.md" />
-    <MESSAGE value="Added two test files for starting iteration 2" />
-    <MESSAGE value="Deleted Processor class &#10;Restructured project packages" />
-    <MESSAGE value="Got rid of/suppressed all warnings in the application package&#10;Added FileSystem class and heavily improved the FileNode class to be serializable&#10;Changed the Response class to have a Serializable object for it's &quot;response&quot; field instead of a String array&#10;Added the core functionality of the &quot;LIST&quot; command" />
-    <MESSAGE value="Removed unused imports" />
-    <option name="LAST_COMMIT_MESSAGE" value="Removed unused imports" />
+    <MESSAGE value="Readded workspace.xml" />
+    <option name="LAST_COMMIT_MESSAGE" value="Readded workspace.xml" />
   </component>
 </project>
