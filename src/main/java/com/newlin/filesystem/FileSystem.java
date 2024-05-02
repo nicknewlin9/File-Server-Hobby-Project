@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FileSystem implements Serializable
@@ -31,7 +30,7 @@ public class FileSystem implements Serializable
             {
                 List<Path> sortedPaths = pathStream
                         .sorted(Comparator.comparing((Path p) -> !Files.isDirectory(p))) // Sort with directories first
-                        .collect(Collectors.toList());
+                        .toList();
 
                 for (Path p : sortedPaths)
                 {

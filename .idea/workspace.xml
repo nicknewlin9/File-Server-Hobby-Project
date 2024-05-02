@@ -4,23 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Deleted Processor class &#10;Restructured project packages">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/FileSystem.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/FileSystemTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="56dc0e1f-1783-48b7-b77c-b09c7a1a908d" name="Changes" comment="Got rid of/suppressed all warnings in the application package&#10;Added FileSystem class and heavily improved the FileNode class to be serializable&#10;Changed the Response class to have a Serializable object for it's &quot;response&quot; field instead of a String array&#10;Added the core functionality of the &quot;LIST&quot; command">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Command.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/ConsoleColors.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/ConsoleColors.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/Response.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/Response.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ServeOutgoingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ServeOutgoingRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeIncomingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeIncomingRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/CommandProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/CommandProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/Node.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/FileNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/ListCommandTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ListCommandTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/FileNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/FileNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/FileSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/filesystem/FileSystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/FileSystemTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/FileSystemTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,37 +82,37 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.Client.executor": "Run",
-    "Application.PathSorter.executor": "Run",
-    "Application.Server.executor": "Run",
-    "Gradle.File-Server-Program [:Application.main()].executor": "Run",
-    "Gradle.File-Server-Program [:Client.main()].executor": "Run",
-    "Gradle.File-Server-Program [:ListCommandTest.main()].executor": "Run",
-    "Gradle.File-Server-Program [:Main.main()].executor": "Run",
-    "Gradle.File-Server-Program [:Server.main()].executor": "Run",
-    "Gradle.FileSystemTest.createDefaultDirectories.executor": "Run",
-    "Gradle.FileSystemTest.createFileStructure.executor": "Run",
-    "Gradle.ListCommandTest.executor": "Run",
-    "Gradle.ListCommandTest.poopy.executor": "Run",
-    "Gradle.ListCommandTest.remote_file_exists.executor": "Run",
-    "Gradle.ListCommandTest.slay.executor": "Run",
-    "JUnit.FileSystemTest.createDefaultDirectories.executor": "Run",
-    "JUnit.FileSystemTest.createFileStructure.executor": "Run",
-    "JUnit.FileSystemTest.createTestFiles.executor": "Run",
-    "JUnit.FileSystemTest.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/nicholasnewlin/Desktop/File-Server-Program/src/main/java",
-    "project.structure.last.edited": "Project",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.Client.executor&quot;: &quot;Run&quot;,
+    &quot;Application.PathSorter.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.File-Server-Program [:Application.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.File-Server-Program [:Client.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.File-Server-Program [:ListCommandTest.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.File-Server-Program [:Main.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.File-Server-Program [:Server.main()].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.FileSystemTest.createDefaultDirectories.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.FileSystemTest.createFileStructure.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ListCommandTest.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ListCommandTest.poopy.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ListCommandTest.remote_file_exists.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.ListCommandTest.slay.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FileSystemTest.createDefaultDirectories.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FileSystemTest.createFileStructure.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FileSystemTest.createTestFiles.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FileSystemTest.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/nicholasnewlin/Desktop/File-Server-Program/src/main/java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java" />
@@ -315,7 +303,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714279662247</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Got rid of/suppressed all warnings in the application package&#10;Added FileSystem class and heavily improved the FileNode class to be serializable&#10;Changed the Response class to have a Serializable object for it's &quot;response&quot; field instead of a String array&#10;Added the core functionality of the &quot;LIST&quot; command">
+      <option name="closed" value="true" />
+      <created>1714464902427</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1714464902427</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -342,6 +338,7 @@
     <MESSAGE value="Updated README.md" />
     <MESSAGE value="Added two test files for starting iteration 2" />
     <MESSAGE value="Deleted Processor class &#10;Restructured project packages" />
-    <option name="LAST_COMMIT_MESSAGE" value="Deleted Processor class &#10;Restructured project packages" />
+    <MESSAGE value="Got rid of/suppressed all warnings in the application package&#10;Added FileSystem class and heavily improved the FileNode class to be serializable&#10;Changed the Response class to have a Serializable object for it's &quot;response&quot; field instead of a String array&#10;Added the core functionality of the &quot;LIST&quot; command" />
+    <option name="LAST_COMMIT_MESSAGE" value="Got rid of/suppressed all warnings in the application package&#10;Added FileSystem class and heavily improved the FileNode class to be serializable&#10;Changed the Response class to have a Serializable object for it's &quot;response&quot; field instead of a String array&#10;Added the core functionality of the &quot;LIST&quot; command" />
   </component>
 </project>

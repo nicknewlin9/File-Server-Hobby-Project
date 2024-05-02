@@ -8,11 +8,17 @@ public class FileSystemTest
     @Test
     public void createFileStructure() throws IOException
     {
-        FileSystem fileSystem = new FileSystem("");
+        FileSystem fileSystem = new FileSystem("src");
 
         FileNode rootNode = fileSystem.getRootNode();
 
         rootNode.printAll();
+
+        System.out.println();
+        System.out.println();
+        System.out.println();
+
+        rootNode.printChildren();
 
     }
 }
