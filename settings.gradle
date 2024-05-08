@@ -1,2 +1,4 @@
 rootProject.name = 'File-Server-Program'
+include 'src:main:GUI'
+findProject(':src:main:GUI')?.name = 'GUI'
 

@@ -67,15 +67,8 @@ public class Client
     {
         try
         {
-            Thread.sleep(2000);
-            System.out.print("STARTING CLIENT");
-            Thread.sleep(500);
-            System.out.print(".");
-            Thread.sleep(500);
-            System.out.print(".");
-            Thread.sleep(500);
-            System.out.print(".\n");
-            Thread.sleep(500);
+            Thread.sleep(1000);
+            System.out.println(log("STARTING CLIENT..."));
 
             connect();
         }
@@ -141,6 +134,7 @@ public class Client
         catch(IOException exception)
         {
             System.err.println(log("COULDN'T CONNECT TO: " + DESTINATION_IP));
+            System.err.println(log("IP: " + socket));
             connect();
         }
         catch(ClassNotFoundException exception)

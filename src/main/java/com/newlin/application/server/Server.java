@@ -32,8 +32,6 @@ public class Server
         {
             startup();
 
-            System.out.println(log("SERVER OPEN AND LISTENING ON PORT: " + LISTENING_PORT));
-
             EXECUTOR.submit(new UserInputListener());
 
             try
@@ -60,15 +58,8 @@ public class Server
     {
         try
         {
-            Thread.sleep(2000);
-            System.out.print("STARTING SERVER");
-            Thread.sleep(500);
-            System.out.print(".");
-            Thread.sleep(500);
-            System.out.print(".");
-            Thread.sleep(500);
-            System.out.print(".\n");
-            Thread.sleep(500);
+            Thread.sleep(1000);
+            System.out.println(log("STARTING SERVER..."));
 
             EXECUTOR.submit(new AcceptIncomingRequests());
         }
@@ -175,6 +166,7 @@ public class Server
                     finally
                     {
                         isOnlineLock.unlock();
+                        System.out.println(log("SERVER OPEN AND LISTENING ON PORT: " + LISTENING_PORT));
                     }
                 }
                 while(isOnline)
