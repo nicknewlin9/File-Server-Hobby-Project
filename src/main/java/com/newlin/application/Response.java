@@ -6,12 +6,12 @@ import java.io.Serializable;
 public class Response implements Serializable
 {
     private boolean success;
-    private Serializable response;
+    private Serializable data;
 
-    public Response(boolean success, Serializable response)
+    public Response(boolean success, Serializable data)
     {
         this.success = success;
-        this.response = response;
+        this.data = data;
     }
 
     public Response(boolean success)
@@ -24,9 +24,9 @@ public class Response implements Serializable
         return success;
     }
 
-    public Serializable getResponse()
+    public Serializable getData()
     {
-        return response;
+        return data;
     }
 
     public void setSuccess(boolean success)
@@ -34,9 +34,9 @@ public class Response implements Serializable
         this.success = success;
     }
 
-    public void setResponse(Serializable response)
+    public void setData(Serializable data)
     {
-        this.response = response;
+        this.data = data;
     }
 
     public boolean equals(boolean success)
