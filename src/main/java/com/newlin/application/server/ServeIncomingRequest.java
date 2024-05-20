@@ -14,8 +14,8 @@ public class ServeIncomingRequest implements Runnable
 {
     public Socket socket;
     public String clientName;
-    public ObjectInputStream objectInputStream;
-    public ObjectOutputStream objectOutputStream;
+    //public ObjectInputStream objectInputStream;
+    //public ObjectOutputStream objectOutputStream;
     public boolean isConnected = false;
     public ReentrantLock isConnectedLock = new ReentrantLock();
 
@@ -27,21 +27,14 @@ public class ServeIncomingRequest implements Runnable
 
     public void run()
     {
-        try
+        try(ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream()))
         {
             if(socket.isConnected())
             {
-                try
-                {
-                    isConnectedLock.lock();
-                    isConnected = true;
-                }
-                finally
-                {
-                    isConnectedLock.unlock();
-                }
+                setConnectedStatus(true);
 
-                objectInputStream = new ObjectInputStream(socket.getInputStream());
+                //objectInputStream = new ObjectInputStream(socket.getInputStream());
                 Command receivedCommand = (Command) objectInputStream.readObject();
 
                 Server.commandSlot.acquire();
@@ -49,14 +42,14 @@ public class ServeIncomingRequest implements Runnable
                 if(receivedCommand.getAction() == Command.Actions.CONNECT)
                 {
                     Response response = new Response(true, Server.log("CONNECTED SUCCESSFULLY"));
-                    objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                    //objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
                 }
                 else if(receivedCommand.getAction() != Command.Actions.CONNECT)
                 {
                     Response response = new Response(true, Server.log("RECEIVED INVALID COMMAND"));
-                    objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                    //objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                     objectOutputStream.writeObject(response);
                     objectOutputStream.flush();
                 }
@@ -66,15 +59,7 @@ public class ServeIncomingRequest implements Runnable
             {
                 if(!socket.isConnected())
                 {
-                    try
-                    {
-                        isConnectedLock.lock();
-                        isConnected = false;
-                    }
-                    finally
-                    {
-                        isConnectedLock.unlock();
-                    }
+                    setConnectedStatus(false);
                     return; //SKIPS TO FINALLY BLOCK
                 }
                 Command receivedCommand = (Command) objectInputStream.readObject();
@@ -127,6 +112,19 @@ public class ServeIncomingRequest implements Runnable
         finally
         {
             Server.queueSlot.release();
+        }
+    }
+
+    public void setConnectedStatus(boolean status)
+    {
+        isConnectedLock.lock();
+        try
+        {
+            isConnected = status;
+        }
+        finally
+        {
+            isConnectedLock.unlock();
         }
     }
 }

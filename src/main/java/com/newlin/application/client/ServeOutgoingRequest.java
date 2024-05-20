@@ -22,13 +22,13 @@ public class ServeOutgoingRequest implements Runnable
             Response receivedResponse = (Response) Client.objectInputStream.readObject();
 
             //PROCESS RESPONSE
-            if(receivedResponse.getResponse() instanceof FileNode response)
+            if(receivedResponse.getData() instanceof FileNode response)
             {
                 response.printAll();
             }
             else
             {
-                System.out.println(receivedResponse.getResponse());
+                System.out.println(receivedResponse.getData());
             }
         }
         catch(IOException | ClassNotFoundException exception)

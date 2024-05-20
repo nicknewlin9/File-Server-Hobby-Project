@@ -110,6 +110,19 @@ public class Server
         return "[" + DateTime + "] [SERVER] " + string;
     }
 
+    public static void setOnlineStatus(boolean status)
+    {
+        isOnlineLock.lock();
+        try
+        {
+            isOnline = status;
+        }
+        finally
+        {
+            isOnlineLock.unlock();
+        }
+    }
+
     public static class UserInputListener implements Runnable
     {
         public void run()
@@ -158,30 +171,14 @@ public class Server
                 ServerSocket incomingConnectionsListenSocket = new ServerSocket(LISTENING_PORT);
                 if(!incomingConnectionsListenSocket.isClosed())
                 {
-                    try
-                    {
-                        isOnlineLock.lock();
-                        isOnline = true;
-                    }
-                    finally
-                    {
-                        isOnlineLock.unlock();
-                        System.out.println(log("SERVER OPEN AND LISTENING ON PORT: " + LISTENING_PORT));
-                    }
+                    setOnlineStatus(true);
+                    System.out.println(log("SERVER OPEN AND LISTENING ON PORT: " + LISTENING_PORT));
                 }
                 while(isOnline)
                 {
                     if(incomingConnectionsListenSocket.isClosed())
                     {
-                        try
-                        {
-                            isOnlineLock.lock();
-                            isOnline = false;
-                        }
-                        finally
-                        {
-                            isOnlineLock.unlock();
-                        }
+                        setOnlineStatus(false);
                         return; //SKIPS TO FINALLY BLOCK
                     }
 

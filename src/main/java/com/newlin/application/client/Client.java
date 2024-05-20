@@ -113,7 +113,7 @@ public class Client
                             Response receivedResponse = (Response) objectInputStream.readObject();
 
                             //PROCESS RESPONSE
-                            System.out.println(receivedResponse.getResponse());
+                            System.out.println(receivedResponse.getData());
                         }
                         break;
 
