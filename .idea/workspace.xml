@@ -151,10 +151,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.FileSystemTest.createFileStructure" />
-        <item itemvalue="Application.Server" />
-        <item itemvalue="Application.GUI" />
         <item itemvalue="Application.Client" />
+        <item itemvalue="Application.Server" />
+        <item itemvalue="JUnit.FileSystemTest.createFileStructure" />
+        <item itemvalue="Application.GUI" />
         <item itemvalue="Application.Client" />
       </list>
     </recent_temporary>
