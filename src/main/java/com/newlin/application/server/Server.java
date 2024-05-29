@@ -10,6 +10,7 @@ import java.net.ServerSocket;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.*;
@@ -26,6 +27,8 @@ public class Server
     public static Condition offline = isOnlineLock.newCondition();
 
     public static ServerSocket listenSocket;
+    public static Semaphore queueSlot;
+    public static Semaphore commandSlot;
 
     public static void main(String[] args) throws Exception
     {
@@ -68,7 +71,10 @@ public class Server
         logger.fine("Opening listen socket...");
         openListenSocket();
 
-        startAcceptingRequests();
+        queueSlot = new Semaphore(Integer.parseInt(properties.getProperty("server.max.clients"))); //5
+        commandSlot = new Semaphore(Integer.parseInt(properties.getProperty("server.max.requests"))); //10
+
+        startAcceptingClients();
         logger.fine("Now accepting client connections");
     }
 
@@ -136,14 +142,14 @@ public class Server
         new Thread(new UserInputListener()).start();
     }
 
-    private static void startAcceptingRequests()
+    private static void startAcceptingClients()
     {
-        new Thread(new AcceptIncomingRequests()).start();
+        new Thread(new AcceptClients()).start();
     }
 
     private static void shutdown()
     {
-
+        System.exit(0);
     }
 
     public static void setOnlineStatus(boolean status)

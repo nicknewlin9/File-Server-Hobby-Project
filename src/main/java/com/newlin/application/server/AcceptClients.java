@@ -3,7 +3,7 @@ package com.newlin.application.server;
 import java.io.IOException;
 import java.net.Socket;
 
-public class AcceptIncomingRequests implements Runnable
+public class AcceptClients implements Runnable
 {
     public void run()
     {
@@ -16,10 +16,14 @@ public class AcceptIncomingRequests implements Runnable
                     Server.setOnlineStatus(false);
                     return; //SKIPS TO FINALLY BLOCK
                 }
-
+                Server.queueSlot.acquire();
                 Socket socket = Server.listenSocket.accept();
-                Server.executorService.submit(new ServeIncomingRequest(socket));
+                Server.executorService.submit(new ServeClient(socket));
             }
+        }
+        catch(InterruptedException exception)
+        {
+            Server.logger.severe("Exception while waiting for available queue slot");
         }
         catch (IOException exception)
         {

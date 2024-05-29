@@ -13,7 +13,6 @@ public class UserInputListener implements Runnable
         {
             while(isOnline)
             {
-
                 logger.info("Enter a command: ");
                 String input = scanner.nextLine();
                 handleInput(input);
