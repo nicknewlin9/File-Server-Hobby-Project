@@ -6,10 +6,14 @@ import com.newlin.util.filesystem.FileSystem;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ServerSocket;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.*;
@@ -25,7 +29,10 @@ public class Client
     public static ReentrantLock isOnlineLock = new ReentrantLock();
     public static Condition offline = isOnlineLock.newCondition();
 
-    public static ServerSocket listenSocket;
+    public static Socket socket;
+    public static ObjectInputStream objectInputStream;
+    public static ObjectOutputStream objectOutputStream;
+    public static Semaphore commandSlot;
 
     public static void main(String[] args) throws Exception
     {
@@ -34,7 +41,7 @@ public class Client
         logger.info("Starting client...");
         startup();
         logger.info("Startup successful");
-        //logger.info("Server open on port: " + Integer.parseInt(properties.getProperty("application.port")));
+        logger.info("Connected to: " + properties.getProperty("client.default.connect.ip"));
 
         startUserInputListener();
 
@@ -65,11 +72,9 @@ public class Client
         logger.fine("Loading file system...");
         fileSystem = new FileSystem(properties.getProperty("client.filesystem.directory"));
 
-        //logger.fine("Opening listen socket...");
-        //openListenSocket();
+        commandSlot = new Semaphore(Integer.parseInt(properties.getProperty("server.max.requests")));
 
-        //startAcceptingRequests();
-        //logger.fine("Now accepting client connections");
+        connect();
     }
 
     private static void initializeLogger()
@@ -99,19 +104,21 @@ public class Client
         }
     }
 
-    private static void openListenSocket()
+    private static void connect()
     {
         try
         {
-            listenSocket = new ServerSocket(Integer.parseInt(properties.getProperty("application.port")));
-            if(!listenSocket.isClosed())
+            socket = new Socket();
+            logger.info("Connecting to default ip...");
+            socket.connect(new InetSocketAddress(properties.getProperty("client.default.connect.ip"), Integer.parseInt(properties.getProperty("application.port"))));
+            if(socket.isConnected())
             {
-                setOnlineStatus(true);
+                isOnline = true;
             }
         }
         catch(IOException exception)
         {
-            logger.severe("Can't open listen socket");
+            logger.severe("Can't connect to default ip");
         }
     }
 
@@ -136,26 +143,8 @@ public class Client
         new Thread(new UserInputListener()).start();
     }
 
-    private static void startAcceptingRequests()
-    {
-        //new Thread(new AcceptIncomingRequests()).start();
-    }
-
     private static void shutdown()
     {
-
-    }
-
-    public static void setOnlineStatus(boolean status)
-    {
-        isOnlineLock.lock();
-        try
-        {
-            isOnline = status;
-        }
-        finally
-        {
-            isOnlineLock.unlock();
-        }
+        System.exit(0);
     }
 }

@@ -11,8 +11,8 @@ public class ConsoleFormatter extends Formatter
     {
         String color = switch (record.getLevel().getName())
         {
-            case "SEVERE" -> ConsoleColors.RED.getCode();
-            case "WARNING" -> ConsoleColors.YELLOW.getCode();
+            case "SEVERE" -> ConsoleColors.BRIGHT_RED.getCode();
+            case "WARNING" -> ConsoleColors.BRIGHT_YELLOW.getCode();
             case "INFO","FINE", "FINER", "FINEST" -> ConsoleColors.BRIGHT_WHITE.getCode();
             default -> ConsoleColors.RESET.getCode();
         };

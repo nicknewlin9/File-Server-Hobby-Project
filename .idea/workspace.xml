@@ -4,16 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Restructured packages&#10;Made Command and Response records instead of classes&#10;Extracted runnable static inner classes into own files&#10;Implemented a basic logger&#10;Implemented use of config.properties to hold application settings">
+    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Cleaned up server package and fixed warnings&#10;Restructuring CommandProcessor class">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/OldClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/OldClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/AcceptIncomingRequests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/AcceptClients.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/OldServer.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeIncomingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/UserInputListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/UserInputListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/CommandProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/command/CommandProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/OldClient.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ServeOutgoingRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ServeCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/UserInputListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/UserInputListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/logger/ConsoleFormatter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/logger/ConsoleFormatter.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,12 +91,13 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
     "Application.App.executor": "Run",
     "Application.Client.executor": "Run",
     "Application.GUI.executor": "Run",
     "Application.LoggingExample.executor": "Run",
     "Application.OldShit.executor": "Run",
-    "Application.Server.executor": "Run",
+    "Application.Server.executor": "Debug",
     "Application.Test (1).executor": "Run",
     "Application.Test.executor": "Run",
     "Application.com.newlin.application.client.OldShit.executor": "Run",
@@ -127,7 +126,7 @@
       <recent name="com.newlin.application.client" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Server">
+  <component name="RunManager" selected="Application.Client">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.newlin.application.client.Client" />
       <module name="File-Server-Program.main" />
@@ -192,11 +191,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Client" />
         <item itemvalue="Application.Server" />
         <item itemvalue="Application.OldClient" />
         <item itemvalue="Application.OldServer" />
         <item itemvalue="JUnit.FileSystemTest.createFileStructure" />
-        <item itemvalue="Application.Client" />
       </list>
     </recent_temporary>
   </component>
@@ -249,7 +248,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717000745797</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Cleaned up server package and fixed warnings&#10;Restructuring CommandProcessor class">
+      <option name="closed" value="true" />
+      <created>1717005958403</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1717005958403</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -268,6 +275,7 @@
     <MESSAGE value="Changed gradle to use Java 21" />
     <MESSAGE value="Forking project" />
     <MESSAGE value="Restructured packages&#10;Made Command and Response records instead of classes&#10;Extracted runnable static inner classes into own files&#10;Implemented a basic logger&#10;Implemented use of config.properties to hold application settings" />
-    <option name="LAST_COMMIT_MESSAGE" value="Restructured packages&#10;Made Command and Response records instead of classes&#10;Extracted runnable static inner classes into own files&#10;Implemented a basic logger&#10;Implemented use of config.properties to hold application settings" />
+    <MESSAGE value="Cleaned up server package and fixed warnings&#10;Restructuring CommandProcessor class" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up server package and fixed warnings&#10;Restructuring CommandProcessor class" />
   </component>
 </project>

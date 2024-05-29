@@ -35,6 +35,7 @@ public class ServeClient implements Runnable
                 Server.commandSlot.acquire();
 
                 Command receivedCommand = (Command) objectInputStream.readObject();
+                Server.logger.info("Received " + receivedCommand.action() + " command from: " + clientName);
                 Response response = new Response(true, receivedCommand);
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
@@ -42,7 +43,7 @@ public class ServeClient implements Runnable
         }
         catch(ClassNotFoundException exception)
         {
-            Server.logger.warning("Can't parse input from client: " + clientName + ". Disconnecting client...");
+            Server.logger.warning("Can't parse command from client: " + clientName);
         }
         catch(InterruptedException exception)
         {
