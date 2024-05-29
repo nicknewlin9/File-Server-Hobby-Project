@@ -1,273 +1,161 @@
 package com.newlin.application.client;
 
-import com.newlin.application.Command;
-import com.newlin.application.Response;
-import com.newlin.application.server.Server;
+import com.newlin.util.logger.ConsoleFormatter;
+import com.newlin.util.logger.LogFileFormatter;
+import com.newlin.util.filesystem.FileSystem;
+
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.time.LocalDateTime;
-import java.util.Scanner;
+import java.io.InputStream;
+import java.net.ServerSocket;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.*;
 
 public class Client
 {
-    public static final int LISTENING_PORT = 3001;
-    public static final int NUM_THREADS = 4 + Server.MAX_REQUESTS;
-    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NUM_THREADS);
-    public static Scanner scanner = new Scanner(System.in);
-    public static Socket socket;
-    public static ObjectOutputStream objectOutputStream;
-    public static ObjectInputStream objectInputStream;
-    public static Semaphore queueSlot = new Semaphore(Server.MAX_REQUESTS,true);
-    public static boolean isConnected = false;
-    public static ReentrantLock isConnectedLock = new ReentrantLock();
-    public static Condition disconnected = isConnectedLock.newCondition();
-    public static String DESTINATION_IP;
-    public static Command CURRENT_COMMAND = new Command(Command.Actions.STARTUP);
+    public static Logger logger;
+    public static Properties properties = new Properties();
+    public static FileSystem fileSystem;
+    public static ExecutorService executorService;
 
-    public static void main(String[] args)
+    public static boolean isOnline = false;
+    public static ReentrantLock isOnlineLock = new ReentrantLock();
+    public static Condition offline = isOnlineLock.newCondition();
+
+    public static ServerSocket listenSocket;
+
+    public static void main(String[] args) throws Exception
     {
+        initializeLogger();
+
+        logger.info("Starting client...");
+        startup();
+        logger.info("Startup successful");
+        //logger.info("Server open on port: " + Integer.parseInt(properties.getProperty("application.port")));
+
+        startUserInputListener();
+
+        //DO CLIENT STUFF
+
         try
         {
-            startup();
-
-            System.out.println(log("CONNECTED TO: " + DESTINATION_IP));
-
-            EXECUTOR.submit(new UserInputListener());
-
-            try
-            {
-                isConnectedLock.lock();
-                disconnected.await();
-                System.out.println(log("DISCONNECTED"));
-            }
-            finally
-            {
-                isConnectedLock.unlock();
-            }
-
-            shutdown();
+            isOnlineLock.lock();
+            offline.await();
         }
-        catch(InterruptedException exception)
+        finally
         {
-            System.err.println(log("EXCEPTION IN MAIN THREAD"));
-            exception.printStackTrace();
-            System.exit(0);
+            isOnlineLock.unlock();
+        }
+
+        logger.info("Shutting down...");
+        shutdown();
+    }
+
+    private static void startup()
+    {
+        logger.fine("Loading properties...");
+        loadProperties();
+
+        logger.fine("Loading executor service...");
+        executorService = Executors.newFixedThreadPool(Integer.parseInt(properties.getProperty("client.max.threads")));
+
+        logger.fine("Loading file system...");
+        fileSystem = new FileSystem(properties.getProperty("client.filesystem.directory"));
+
+        //logger.fine("Opening listen socket...");
+        //openListenSocket();
+
+        //startAcceptingRequests();
+        //logger.fine("Now accepting client connections");
+    }
+
+    private static void initializeLogger()
+    {
+        logger = Logger.getLogger("CLIENT");
+        LogManager.getLogManager().reset();
+        logger.setLevel(Level.ALL);
+
+        //SET LOGGER OUTPUT TO CONSOLE
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.INFO);
+        consoleHandler.setFormatter(new ConsoleFormatter());
+
+        logger.addHandler(consoleHandler);
+
+        //SET LOGGER OUTPUT TO FILE
+        try
+        {
+            FileHandler fileHandler = new FileHandler("logs/client_latest.log");
+            fileHandler.setLevel(Level.ALL);
+            fileHandler.setFormatter(new LogFileFormatter());
+            logger.addHandler(fileHandler);
+        }
+        catch (IOException exception)
+        {
+            logger.warning("Can't create log file");
         }
     }
 
-    public static void startup()
+    private static void openListenSocket()
     {
         try
         {
-            Thread.sleep(1000);
-            System.out.println(log("STARTING CLIENT..."));
-
-            connect();
-        }
-        catch(InterruptedException exception)
-        {
-            System.err.println(log("EXCEPTION DURING STARTUP"));
-            exception.printStackTrace();
-            System.exit(0);
-        }
-    }
-    public static void connect() throws InterruptedException
-    {
-        try
-        {
-            do
+            listenSocket = new ServerSocket(Integer.parseInt(properties.getProperty("application.port")));
+            if(!listenSocket.isClosed())
             {
-                System.out.println(log("ENTER A COMMAND: "));
-                switch (scanner.nextLine().toUpperCase())
-                {
-                    case "CONNECT":
-                        System.out.println(log("TYPE IP ADDRESS TO CONNECT TO: "));
-                        DESTINATION_IP = scanner.nextLine();
-                        socket = new Socket();
-                        socket.connect(new InetSocketAddress(DESTINATION_IP,LISTENING_PORT));
-                        if(socket.isConnected())
-                        {
-                            try
-                            {
-                                isConnectedLock.lock();
-                                isConnected = true;
-                            }
-                            finally
-                            {
-                                isConnectedLock.unlock();
-                            }
-
-                            objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
-                            objectOutputStream.writeObject(new Command(Command.Actions.CONNECT));
-                            objectOutputStream.flush();
-
-                            objectInputStream = new ObjectInputStream(socket.getInputStream());
-                            Response receivedResponse = (Response) objectInputStream.readObject();
-
-                            //PROCESS RESPONSE
-                            System.out.println(receivedResponse.getData());
-                        }
-                        break;
-
-                    case "QUIT":
-                        throw new InterruptedException();
-
-                    case "FORCE QUIT":
-                        System.exit(0);
-                        break;
-
-                    default:
-                        System.out.println(log("VALID COMMANDS: \"CONNECT\" \"QUIT\" OR \"FORCE QUIT\""));
-                        break;
-                }
+                setOnlineStatus(true);
             }
-            while(!isConnected);
         }
         catch(IOException exception)
         {
-            System.err.println(log("COULDN'T CONNECT TO: " + DESTINATION_IP));
-            System.err.println(log("IP: " + socket));
-            connect();
-        }
-        catch(ClassNotFoundException exception)
-        {
-            System.err.println(log("EXCEPTION WHILE SENDING PING TO SERVER (ESTABLISHING I/O STREAMS FOR THE SOCKET)"));
-            exception.printStackTrace();
-            System.exit(0);
+            logger.severe("Can't open listen socket");
         }
     }
 
-    public static void shutdown()
+    private static void loadProperties()
     {
+        try (InputStream input = Client.class.getClassLoader().getResourceAsStream("config.properties"))
+        {
+            if (input == null)
+            {
+                logger.severe("Can't find config.properties");
+            }
+            properties.load(input);
+        }
+        catch (IOException exception)
+        {
+            logger.severe("Can't read config.properties");
+        }
+    }
+
+    private static void startUserInputListener()
+    {
+        new Thread(new UserInputListener()).start();
+    }
+
+    private static void startAcceptingRequests()
+    {
+        //new Thread(new AcceptIncomingRequests()).start();
+    }
+
+    private static void shutdown()
+    {
+
+    }
+
+    public static void setOnlineStatus(boolean status)
+    {
+        isOnlineLock.lock();
         try
         {
-            System.err.print(log("SHUTTING DOWN"));
-            Thread.sleep(1000);
-            System.err.print(".");
-            Thread.sleep(1000);
-            System.err.print(".");
-            Thread.sleep(1000);
-            System.err.print(".\n");
-            Thread.sleep(1000);
-
-            System.exit(0);
+            isOnline = status;
         }
-        catch(InterruptedException exception)
+        finally
         {
-            System.err.println(log("EXCEPTION DURING SHUTDOWN"));
-            exception.printStackTrace();
-            System.exit(0);
-        }
-    }
-
-    public static String log(String string)
-    {
-        String month = String.format("%02d", LocalDateTime.now().getMonthValue());
-        String day = String.format("%02d", LocalDateTime.now().getDayOfMonth());
-        String year = String.format("%02d", LocalDateTime.now().getYear());
-        String date = month + "/" + day + "/" + year;
-
-        String hour = String.format("%02d", LocalDateTime.now().getHour());
-        String minute = String.format("%02d", LocalDateTime.now().getMinute());
-        String second = String.format("%02d", LocalDateTime.now().getSecond());
-        String time = hour + ":" + minute + ":" + second;
-
-        String DateTime = date + " " + time;
-        return "[" + DateTime + "] [CLIENT] " + string;
-    }
-
-    public static class UserInputListener implements Runnable
-    {
-        public void run()
-        {
-            try
-            {
-                while(isConnected)
-                {
-                    if(!socket.isConnected())
-                    {
-                        isConnected = false;
-                        return; //SKIPS TO FINALLY BLOCK
-                    }
-                    queueSlot.acquire();
-                    System.out.println(log("ENTER A COMMAND: "));
-                    switch(scanner.nextLine().toUpperCase())
-                    {
-                        case "QUIT":
-                            return;
-
-                        case "FORCE QUIT":
-                            System.exit(0);
-                            break;
-
-                        case "LIST":
-                            System.out.println(log("DIRECTORY: "));
-                            String directory = scanner.nextLine();
-                            CURRENT_COMMAND = new Command(Command.Actions.LIST,directory);
-                            EXECUTOR.submit(new ServeOutgoingRequest(CURRENT_COMMAND));
-                            break;
-
-                        case "DELETE":
-                            System.out.println(log("FILENAME TO DELETE: "));
-                            String filenameToDelete = scanner.nextLine();
-                            CURRENT_COMMAND = new Command(Command.Actions.DELETE,filenameToDelete);
-                            EXECUTOR.submit(new ServeOutgoingRequest(CURRENT_COMMAND));
-                            break;
-
-                        case "RENAME":
-                            System.out.println(log("FILENAME TO RENAME: "));
-                            String filenameToRename = scanner.nextLine();
-                            System.out.println(log("NEW FILENAME: "));
-                            String newFilename = scanner.nextLine();
-                            CURRENT_COMMAND = new Command(Command.Actions.RENAME,filenameToRename,newFilename);
-                            EXECUTOR.submit(new ServeOutgoingRequest(CURRENT_COMMAND));
-                            break;
-
-                        case "DOWNLOAD":
-                            System.out.println(log("FILENAME TO DOWNLOAD: "));
-                            String filenameToDownload = scanner.nextLine();
-                            CURRENT_COMMAND = new Command(Command.Actions.DOWNLOAD,filenameToDownload);
-                            EXECUTOR.submit(new ServeOutgoingRequest(CURRENT_COMMAND));
-                            break;
-
-                        case "UPLOAD":
-                            System.out.println(log("FILENAME TO UPLOAD: "));
-                            String filenameToUpload = scanner.nextLine();
-                            CURRENT_COMMAND = new Command(Command.Actions.UPLOAD,filenameToUpload);
-                            EXECUTOR.submit(new ServeOutgoingRequest(CURRENT_COMMAND));
-                            break;
-
-                        default:
-                            System.out.println(log("VALID COMMANDS: \"LIST\" \"DELETE\" \"RENAME\" \"DOWNLOAD\" \"UPLOAD\" \"QUIT\" OR \"FORCE QUIT\""));
-                            break;
-                    }
-                }
-            }
-            catch(InterruptedException exception)
-            {
-                System.err.println(log("EXCEPTION IN USER INPUT THREAD"));
-                exception.printStackTrace();
-            }
-            finally
-            {
-                try
-                {
-                    isConnectedLock.lock();
-                    disconnected.signal();
-                }
-                finally
-                {
-                    isConnectedLock.unlock();
-                }
-            }
+            isOnlineLock.unlock();
         }
     }
 }

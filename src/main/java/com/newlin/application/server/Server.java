@@ -1,113 +1,149 @@
 package com.newlin.application.server;
 
-import com.newlin.filesystem.FileSystem;
+import com.newlin.util.logger.ConsoleFormatter;
+import com.newlin.util.logger.LogFileFormatter;
+import com.newlin.util.filesystem.FileSystem;
+
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.time.LocalDateTime;
-import java.util.Scanner;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.*;
 
 public class Server
 {
-    public static final int MAX_CLIENTS = 3;
-    public static final int MAX_REQUESTS = 6;
-    public static final int LISTENING_PORT = 3001;
-    public static final int NUM_THREADS = 2 + MAX_CLIENTS + MAX_REQUESTS;
-    public static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(NUM_THREADS);
-    public static Semaphore queueSlot = new Semaphore(MAX_CLIENTS,true);
-    public static Semaphore commandSlot = new Semaphore(MAX_REQUESTS,true);
+    public static Logger logger;
+    public static Properties properties = new Properties();
+    public static FileSystem fileSystem;
+    public static ExecutorService executorService;
+
     public static boolean isOnline = false;
     public static ReentrantLock isOnlineLock = new ReentrantLock();
     public static Condition offline = isOnlineLock.newCondition();
-    public static FileSystem fileSystem = new FileSystem("remote");
 
-    public static void main(String[] args)
+    public static ServerSocket listenSocket;
+
+    public static void main(String[] args) throws Exception
+    {
+        initializeLogger();
+
+        logger.info("Starting server...");
+        startup();
+        logger.info("Startup successful");
+        logger.info("Server open on port: " + Integer.parseInt(properties.getProperty("application.port")));
+
+        startUserInputListener();
+
+        //DO SERVER STUFF
+
+        try
+        {
+            isOnlineLock.lock();
+            offline.await();
+        }
+        finally
+        {
+            isOnlineLock.unlock();
+        }
+
+        logger.info("Shutting down...");
+        shutdown();
+    }
+
+    private static void startup()
+    {
+        logger.fine("Loading properties...");
+        loadProperties();
+
+        logger.fine("Loading executor service...");
+        executorService = Executors.newFixedThreadPool(Integer.parseInt(properties.getProperty("server.max.threads")));
+
+        logger.fine("Loading file system...");
+        fileSystem = new FileSystem(properties.getProperty("server.filesystem.directory"));
+
+        logger.fine("Opening listen socket...");
+        openListenSocket();
+
+        startAcceptingRequests();
+        logger.fine("Now accepting client connections");
+    }
+
+    private static void initializeLogger()
+    {
+        logger = Logger.getLogger("SERVER");
+        LogManager.getLogManager().reset();
+        logger.setLevel(Level.ALL);
+
+        //SET LOGGER OUTPUT TO CONSOLE
+        ConsoleHandler consoleHandler = new ConsoleHandler();
+        consoleHandler.setLevel(Level.INFO);
+        consoleHandler.setFormatter(new ConsoleFormatter());
+
+        logger.addHandler(consoleHandler);
+
+        //SET LOGGER OUTPUT TO FILE
+        try
+        {
+            FileHandler fileHandler = new FileHandler("logs/server_latest.log");
+            fileHandler.setLevel(Level.ALL);
+            fileHandler.setFormatter(new LogFileFormatter());
+            logger.addHandler(fileHandler);
+        }
+        catch (IOException exception)
+        {
+            logger.warning("Can't create log file");
+        }
+    }
+
+    private static void openListenSocket()
     {
         try
         {
-            startup();
-
-            EXECUTOR.submit(new UserInputListener());
-
-            try
+            listenSocket = new ServerSocket(Integer.parseInt(properties.getProperty("application.port")));
+            if(!listenSocket.isClosed())
             {
-                isOnlineLock.lock();
-                offline.await();
+                setOnlineStatus(true);
             }
-            finally
+        }
+        catch(IOException exception)
+        {
+            logger.severe("Can't open listen socket");
+        }
+    }
+
+    private static void loadProperties()
+    {
+        try (InputStream input = Server.class.getClassLoader().getResourceAsStream("config.properties"))
+        {
+            if (input == null)
             {
-                isOnlineLock.unlock();
+                logger.severe("Can't find config.properties");
             }
-
-            shutdown();
+            properties.load(input);
         }
-        catch(InterruptedException exception)
+        catch (IOException exception)
         {
-            System.err.println(log("EXCEPTION IN MAIN THREAD"));
-            exception.printStackTrace();
-            System.exit(0);
+            logger.severe("Can't read config.properties");
         }
     }
 
-    public static void startup()
+    private static void startUserInputListener()
     {
-        try
-        {
-            Thread.sleep(1000);
-            System.out.println(log("STARTING SERVER..."));
-
-            EXECUTOR.submit(new AcceptIncomingRequests());
-        }
-        catch(InterruptedException exception)
-        {
-            System.err.println(log("EXCEPTION DURING STARTUP"));
-            exception.printStackTrace();
-            System.exit(0);
-        }
+        new Thread(new UserInputListener()).start();
     }
 
-    public static void shutdown()
+    private static void startAcceptingRequests()
     {
-        try
-        {
-            System.err.print(log("SHUTTING DOWN"));
-            Thread.sleep(1000);
-            System.err.print(".");
-            Thread.sleep(1000);
-            System.err.print(".");
-            Thread.sleep(1000);
-            System.err.print(".\n");
-            Thread.sleep(1000);
-
-            System.exit(0);
-        }
-        catch(InterruptedException exception)
-        {
-            System.err.println(log("EXCEPTION DURING SHUTDOWN"));
-            exception.printStackTrace();
-            System.exit(0);
-        }
+        new Thread(new AcceptIncomingRequests()).start();
     }
 
-    public static String log(String string)
+    private static void shutdown()
     {
-        String month = String.format("%02d", LocalDateTime.now().getMonthValue());
-        String day = String.format("%02d", LocalDateTime.now().getDayOfMonth());
-        String year = String.format("%02d", LocalDateTime.now().getYear());
-        String date = month + "/" + day + "/" + year;
 
-        String hour = String.format("%02d", LocalDateTime.now().getHour());
-        String minute = String.format("%02d", LocalDateTime.now().getMinute());
-        String second = String.format("%02d", LocalDateTime.now().getSecond());
-        String time = hour + ":" + minute + ":" + second;
-
-        String DateTime = date + " " + time;
-        return "[" + DateTime + "] [SERVER] " + string;
     }
 
     public static void setOnlineStatus(boolean status)
@@ -120,91 +156,6 @@ public class Server
         finally
         {
             isOnlineLock.unlock();
-        }
-    }
-
-    public static class UserInputListener implements Runnable
-    {
-        public void run()
-        {
-            try(Scanner scanner = new Scanner(System.in))
-            {
-                while(isOnline)
-                {
-                    System.out.println(log("ENTER A COMMAND: "));
-                    switch(scanner.nextLine().toUpperCase())
-                    {
-                        case "QUIT":
-                            return;
-
-                        case "FORCE QUIT":
-                            System.exit(0);
-                            break;
-
-                        default:
-                            System.out.println(log("VALID COMMANDS: \"QUIT\" OR \"FORCE QUIT\""));
-                            break;
-                    }
-                }
-            }
-            finally
-            {
-                try
-                {
-                    isOnlineLock.lock();
-                    offline.signal();
-                }
-                finally
-                {
-                    isOnlineLock.unlock();
-                }
-            }
-        }
-    }
-
-    public static class AcceptIncomingRequests implements Runnable
-    {
-        public void run()
-        {
-            try
-            {
-                ServerSocket incomingConnectionsListenSocket = new ServerSocket(LISTENING_PORT);
-                if(!incomingConnectionsListenSocket.isClosed())
-                {
-                    setOnlineStatus(true);
-                    System.out.println(log("SERVER OPEN AND LISTENING ON PORT: " + LISTENING_PORT));
-                }
-                while(isOnline)
-                {
-                    if(incomingConnectionsListenSocket.isClosed())
-                    {
-                        setOnlineStatus(false);
-                        return; //SKIPS TO FINALLY BLOCK
-                    }
-
-                    queueSlot.acquire();
-                    Socket socket = incomingConnectionsListenSocket.accept();
-                    System.out.println(log("NEW CONNECTION FROM: " + socket.getInetAddress().getHostName()));
-                    EXECUTOR.submit(new ServeIncomingRequest(socket));
-                }
-            }
-            catch(InterruptedException | IOException exception)
-            {
-                System.err.println(log("EXCEPTION IN ACCEPT INCOMING REQUESTS THREAD"));
-                exception.printStackTrace();
-            }
-            finally
-            {
-                try
-                {
-                    isOnlineLock.lock();
-                    offline.signal();
-                }
-                finally
-                {
-                    isOnlineLock.unlock();
-                }
-            }
         }
     }
 }

@@ -1,6 +1,6 @@
-package com.newlin.filesystem;
+package com.newlin.util.filesystem;
 
-import com.newlin.application.ConsoleColors;
+import com.newlin.util.logger.ConsoleColors;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -29,7 +29,7 @@ public class FileSystem implements Serializable
             try (Stream<Path> pathStream = Files.list(path))
             {
                 List<Path> sortedPaths = pathStream
-                        .sorted(Comparator.comparing((Path p) -> !Files.isDirectory(p))) // Sort with directories first
+                        .sorted(Comparator.comparing((Path p) -> !Files.isDirectory(p)))
                         .toList();
 
                 for (Path p : sortedPaths)

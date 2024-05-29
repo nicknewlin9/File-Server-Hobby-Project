@@ -1,6 +1,6 @@
-package com.newlin.filesystem;
+package com.newlin.util.filesystem;
 
-import com.newlin.application.ConsoleColors;
+import com.newlin.util.logger.ConsoleColors;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;

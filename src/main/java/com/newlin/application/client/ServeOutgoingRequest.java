@@ -1,8 +1,8 @@
 package com.newlin.application.client;
 
-import com.newlin.application.Command;
-import com.newlin.application.Response;
-import com.newlin.filesystem.FileNode;
+import com.newlin.util.command.Command;
+import com.newlin.util.response.Response;
+import com.newlin.util.filesystem.FileNode;
 import java.io.IOException;
 
 public class ServeOutgoingRequest implements Runnable
@@ -18,27 +18,27 @@ public class ServeOutgoingRequest implements Runnable
     {
         try
         {
-            Client.objectOutputStream.writeObject(command);
-            Response receivedResponse = (Response) Client.objectInputStream.readObject();
+            OldClient.objectOutputStream.writeObject(command);
+            Response receivedResponse = (Response) OldClient.objectInputStream.readObject();
 
             //PROCESS RESPONSE
-            if(receivedResponse.getData() instanceof FileNode response)
+            if(receivedResponse.data() instanceof FileNode response)
             {
                 response.printAll();
             }
             else
             {
-                System.out.println(receivedResponse.getData());
+                System.out.println(receivedResponse.data());
             }
         }
         catch(IOException | ClassNotFoundException exception)
         {
-            System.err.println(Client.log("EXCEPTION IN SERVE OUTGOING REQUEST THREAD"));
+            System.err.println(OldClient.log("EXCEPTION IN SERVE OUTGOING REQUEST THREAD"));
             exception.printStackTrace();
         }
         finally
         {
-            Client.queueSlot.release();
+            OldClient.queueSlot.release();
         }
     }
 }
