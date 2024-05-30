@@ -110,10 +110,19 @@ public class Client
         {
             socket = new Socket();
             logger.info("Connecting to default ip...");
-            socket.connect(new InetSocketAddress(properties.getProperty("client.default.connect.ip"), Integer.parseInt(properties.getProperty("application.port"))));
+            String ip = properties.getProperty("client.default.connect.ip");
+            logger.info("IP: " + ip);
+            int port = Integer.parseInt(properties.getProperty("application.port"));
+            logger.info("Port: " + port);
+
+            socket.connect(new InetSocketAddress(ip,port));
             if(socket.isConnected())
             {
                 isOnline = true;
+                logger.info("CONNECTED!!");
+                objectInputStream = new ObjectInputStream(socket.getInputStream());
+                logger.info("INPUT STREAM SET!!");
+                objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
             }
         }
         catch(IOException exception)
