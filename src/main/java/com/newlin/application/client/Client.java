@@ -119,10 +119,10 @@ public class Client
             if(socket.isConnected())
             {
                 isOnline = true;
-                logger.info("CONNECTED!!");
-                objectInputStream = new ObjectInputStream(socket.getInputStream());
-                logger.info("INPUT STREAM SET!!");
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+                logger.info("Output stream set");
+                objectInputStream = new ObjectInputStream(socket.getInputStream());
+                logger.info("Input stream set");
             }
         }
         catch(IOException exception)

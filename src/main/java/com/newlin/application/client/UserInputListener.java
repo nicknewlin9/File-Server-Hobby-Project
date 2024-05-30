@@ -56,6 +56,7 @@ public class UserInputListener implements Runnable
                 return new Command(Action.QUIT);
 
             case Action.FORCE_QUIT:
+                Client.offline.signal();
                 //System.exit(0);
                 return new Command(Action.FORCE_QUIT);
 

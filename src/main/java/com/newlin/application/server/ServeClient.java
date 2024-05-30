@@ -22,8 +22,8 @@ public class ServeClient implements Runnable
 
     public void run()
     {
-        try(ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream()))
+        try(ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream()))
         {
             while(isConnected)
             {
@@ -35,7 +35,7 @@ public class ServeClient implements Runnable
                 Server.commandSlot.acquire();
 
                 Command receivedCommand = (Command) objectInputStream.readObject();
-                Server.logger.info("Received " + receivedCommand.action() + " command from: " + clientName);
+                Server.logger.info("From " + clientName + ": " + receivedCommand.toString());
                 Response response = new Response(true, receivedCommand);
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
