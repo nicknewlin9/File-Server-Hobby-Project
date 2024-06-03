@@ -11,8 +11,6 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.*;
 
 public class Server
@@ -22,9 +20,7 @@ public class Server
     public static FileSystem fileSystem;
     public static ExecutorService executorService;
 
-    public static boolean isOnline = false;
-    public static ReentrantLock isOnlineLock = new ReentrantLock();
-    public static Condition offline = isOnlineLock.newCondition();
+    public static volatile boolean isOnline = false;
 
     public static ServerSocket listenSocket;
     public static Semaphore queueSlot;
@@ -43,14 +39,12 @@ public class Server
 
         //DO SERVER STUFF
 
-        try
+        synchronized (Server.class)
         {
-            isOnlineLock.lock();
-            offline.await();
-        }
-        finally
-        {
-            isOnlineLock.unlock();
+            while (isOnline)
+            {
+                Server.class.wait();
+            }
         }
 
         logger.info("Shutting down...");
@@ -154,14 +148,10 @@ public class Server
 
     public static void setOnlineStatus(boolean status)
     {
-        isOnlineLock.lock();
-        try
+        isOnline = status;
+        synchronized (Server.class)
         {
-            isOnline = status;
-        }
-        finally
-        {
-            isOnlineLock.unlock();
+            Server.class.notifyAll();
         }
     }
 }

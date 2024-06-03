@@ -31,15 +31,7 @@ public class AcceptClients implements Runnable
         }
         finally
         {
-            try
-            {
-                Server.isOnlineLock.lock();
-                Server.offline.signal();
-            }
-            finally
-            {
-                Server.isOnlineLock.unlock();
-            }
+            Server.setOnlineStatus(false);
         }
     }
 }

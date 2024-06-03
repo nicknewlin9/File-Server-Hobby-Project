@@ -29,6 +29,7 @@ public class FileSystem implements Serializable
             try (Stream<Path> pathStream = Files.list(path))
             {
                 List<Path> sortedPaths = pathStream
+                        .filter(p -> !p.getFileName().toString().startsWith("."))
                         .sorted(Comparator.comparing((Path p) -> !Files.isDirectory(p)))
                         .toList();
 

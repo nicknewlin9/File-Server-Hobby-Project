@@ -14,8 +14,6 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.*;
 
 public class Client
@@ -25,9 +23,7 @@ public class Client
     public static FileSystem fileSystem;
     public static ExecutorService executorService;
 
-    public static boolean isOnline = false;
-    public static ReentrantLock isOnlineLock = new ReentrantLock();
-    public static Condition offline = isOnlineLock.newCondition();
+    public static volatile boolean isOnline = false;
 
     public static Socket socket;
     public static ObjectInputStream objectInputStream;
@@ -47,14 +43,12 @@ public class Client
 
         //DO CLIENT STUFF
 
-        try
+        synchronized (Client.class)
         {
-            isOnlineLock.lock();
-            offline.await();
-        }
-        finally
-        {
-            isOnlineLock.unlock();
+            while (isOnline)
+            {
+                Client.class.wait();
+            }
         }
 
         logger.info("Shutting down...");
@@ -118,7 +112,7 @@ public class Client
             socket.connect(new InetSocketAddress(ip,port));
             if(socket.isConnected())
             {
-                isOnline = true;
+                setOnlineStatus(true);
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 logger.info("Output stream set");
                 objectInputStream = new ObjectInputStream(socket.getInputStream());
@@ -127,7 +121,12 @@ public class Client
         }
         catch(IOException exception)
         {
-            logger.severe("Can't connect to default ip");
+            logger.severe("EXCEPTION: Can't connect to default ip");
+            logger.severe(exception.getMessage());
+            for(StackTraceElement element : exception.getStackTrace())
+            {
+                logger.severe("    " + element.toString());
+            }
         }
     }
 
@@ -155,5 +154,14 @@ public class Client
     private static void shutdown()
     {
         System.exit(0);
+    }
+
+    public static void setOnlineStatus(boolean status)
+    {
+        isOnline = status;
+        synchronized (Client.class)
+        {
+            Client.class.notifyAll();
+        }
     }
 }

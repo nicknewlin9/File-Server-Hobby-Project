@@ -52,12 +52,9 @@ public class UserInputListener implements Runnable
         switch(action)
         {
             case Action.QUIT:
-                //Client.offline.signal();
                 return new Command(Action.QUIT);
 
             case Action.FORCE_QUIT:
-                Client.offline.signal();
-                //System.exit(0);
                 return new Command(Action.FORCE_QUIT);
 
             case Action.LIST:
@@ -65,14 +62,14 @@ public class UserInputListener implements Runnable
                 String directory = scanner.nextLine();
                 logger.fine("User typed: \"" + directory + "\"");
 
-                return new Command(Action.LIST,directory);
+                return new Command(Action.LIST, directory);
 
             case Action.DELETE:
                 logger.info("Filename to delete: ");
                 String filenameToDelete = scanner.nextLine();
                 logger.fine("User typed: \"" + filenameToDelete + "\"");
 
-                return new Command(Action.DELETE,filenameToDelete);
+                return new Command(Action.DELETE, filenameToDelete);
 
             case Action.RENAME:
                 logger.info("Filename to rename: ");
@@ -82,21 +79,21 @@ public class UserInputListener implements Runnable
                 String newFilename = scanner.nextLine();
                 logger.fine("User typed: \"" + newFilename + "\"");
 
-                return new Command(Action.RENAME,filenameToRename,newFilename);
+                return new Command(Action.RENAME, filenameToRename, newFilename);
 
             case Action.DOWNLOAD:
                 logger.info("Filename to download: ");
                 String filenameToDownload = scanner.nextLine();
                 logger.fine("User typed: \"" + filenameToDownload + "\"");
 
-                return new Command(Action.DOWNLOAD,filenameToDownload);
+                return new Command(Action.DOWNLOAD, filenameToDownload);
 
             case Action.UPLOAD:
                 logger.info("Filename to upload: ");
                 String filenameToUpload = scanner.nextLine();
                 logger.fine("User typed: \"" + filenameToUpload + "\"");
 
-                return new Command(Action.UPLOAD,filenameToUpload);
+                return new Command(Action.UPLOAD, filenameToUpload);
 
             default:
                 logger.info("Valid commands: \"list\" \"delete\" \"rename\" \"download\" \"upload\" \"quit\" or \"force quit\"");

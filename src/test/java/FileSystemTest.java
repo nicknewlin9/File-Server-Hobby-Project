@@ -6,17 +6,11 @@ import com.newlin.util.filesystem.FileSystem;
 public class FileSystemTest
 {
     @Test
-    public void createFileStructure() throws IOException
+    public void createFileStructure()
     {
-        FileSystem fileSystem = new FileSystem("src");
+        FileSystem fileSystem = new FileSystem("/Users/nicholasnewlin/Documents/Minecraft/MINECRAFT GAMES/SLUTCRAFT V5 (1.19.2)/mods");
 
         FileNode rootNode = fileSystem.getRootNode();
-
-        rootNode.printAll();
-
-        System.out.println();
-        System.out.println();
-        System.out.println();
 
         rootNode.printChildren();
 

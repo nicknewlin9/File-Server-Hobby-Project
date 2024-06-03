@@ -4,11 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Cleaned up client package and fixed warnings">
+    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Assigned ObjectOutputStream first for client and server to allow it to actually work. I spent hours trying to figure that out">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FilePrinter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/VolatileExample.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/UserInputListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/UserInputListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/ServeClient.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/AcceptClients.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/AcceptClients.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/command/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/command/Command.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileSystem.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/FileSystemTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/FileSystemTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -97,6 +103,7 @@
     "Application.Server.executor": "Run",
     "Application.Test (1).executor": "Run",
     "Application.Test.executor": "Run",
+    "Application.VolatileExample.executor": "Run",
     "Application.com.newlin.application.client.OldShit.executor": "Run",
     "Gradle.Upgrade Gradle wrapper.executor": "Run",
     "JUnit.FileSystemTest.createFileStructure.executor": "Run",
@@ -123,7 +130,7 @@
       <recent name="com.newlin.application.client" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Client">
+  <component name="RunManager" selected="JUnit.FileSystemTest.createFileStructure">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.newlin.application.client.Client" />
       <module name="File-Server-Program.main" />
@@ -150,8 +157,8 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="OldServer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.newlin.application.server.OldServer" />
+    <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.newlin.application.server.Server" />
       <module name="File-Server-Program.main" />
       <extension name="coverage">
         <pattern>
@@ -163,15 +170,9 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.newlin.application.server.Server" />
-      <module name="File-Server-Program.main" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.newlin.application.server.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
+    <configuration name="VolatileExample" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="VolatileExample" />
+      <module name="File-Server-Program.test" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -188,11 +189,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Server" />
-        <item itemvalue="Application.Client" />
-        <item itemvalue="Application.OldClient" />
-        <item itemvalue="Application.OldServer" />
         <item itemvalue="JUnit.FileSystemTest.createFileStructure" />
+        <item itemvalue="Application.VolatileExample" />
+        <item itemvalue="Application.Client" />
+        <item itemvalue="Application.Server" />
+        <item itemvalue="Application.OldClient" />
       </list>
     </recent_temporary>
   </component>
@@ -269,7 +270,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717028069139</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Assigned ObjectOutputStream first for client and server to allow it to actually work. I spent hours trying to figure that out">
+      <option name="closed" value="true" />
+      <created>1717032591209</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1717032591209</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -290,6 +299,7 @@
     <MESSAGE value="Restructured packages&#10;Made Command and Response records instead of classes&#10;Extracted runnable static inner classes into own files&#10;Implemented a basic logger&#10;Implemented use of config.properties to hold application settings" />
     <MESSAGE value="Cleaned up server package and fixed warnings&#10;Restructuring CommandProcessor class" />
     <MESSAGE value="Cleaned up client package and fixed warnings" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleaned up client package and fixed warnings" />
+    <MESSAGE value="Assigned ObjectOutputStream first for client and server to allow it to actually work. I spent hours trying to figure that out" />
+    <option name="LAST_COMMIT_MESSAGE" value="Assigned ObjectOutputStream first for client and server to allow it to actually work. I spent hours trying to figure that out" />
   </component>
 </project>
