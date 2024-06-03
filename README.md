@@ -8,7 +8,6 @@
 #### - This first iteration of this program is supposed to demonstrate my knowledge about how to implement multi-threading techniques while programming with java sockets
 ## Second Iteration - backlog
 #### - Add graceful shutdown for Client and Server
-#### - Add a check to client input listener to check for available queue slot before prompting for command
 #### - Configure Server and Client to use minimum number of threads for the thread pool
 #### - Identify and label fatal exceptions, then initiate the graceful shutdown
 #### - Implement file system functionality

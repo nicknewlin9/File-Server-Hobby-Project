@@ -1,3 +1,5 @@
+package com.newlin.test;
+
 public class VolatileExample
 {
     private volatile boolean flag = false;

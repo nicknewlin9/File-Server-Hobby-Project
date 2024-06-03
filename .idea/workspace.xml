@@ -4,17 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Assigned ObjectOutputStream first for client and server to allow it to actually work. I spent hours trying to figure that out">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FilePrinter.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/VolatileExample.java" afterDir="false" />
+    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Implemented new thread safety code using synchronized blocks">
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/newlin/test/FileSystemTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/UserInputListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/UserInputListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/AcceptClients.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/AcceptClients.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/command/Command.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/command/Command.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileSystem.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileSystem.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/FileSystemTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/FileSystemTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/command/CommandProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/command/CommandProcessor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FilePrinter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileSystem.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/FileSystemTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ListCommandTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/newlin/test/ListCommandTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/VolatileExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/newlin/test/VolatileExample.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,31 +95,31 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Application.App.executor": "Run",
-    "Application.Client.executor": "Run",
-    "Application.GUI.executor": "Run",
-    "Application.LoggingExample.executor": "Run",
-    "Application.OldShit.executor": "Run",
-    "Application.Server.executor": "Run",
-    "Application.Test (1).executor": "Run",
-    "Application.Test.executor": "Run",
-    "Application.VolatileExample.executor": "Run",
-    "Application.com.newlin.application.client.OldShit.executor": "Run",
-    "Gradle.Upgrade Gradle wrapper.executor": "Run",
-    "JUnit.FileSystemTest.createFileStructure.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/nicholasnewlin/Documents/Java Projects/File-Server-Program/src/main/resources",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Application.App.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Client.executor&quot;: &quot;Run&quot;,
+    &quot;Application.GUI.executor&quot;: &quot;Run&quot;,
+    &quot;Application.LoggingExample.executor&quot;: &quot;Run&quot;,
+    &quot;Application.OldShit.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Test (1).executor&quot;: &quot;Run&quot;,
+    &quot;Application.Test.executor&quot;: &quot;Run&quot;,
+    &quot;Application.VolatileExample.executor&quot;: &quot;Run&quot;,
+    &quot;Application.com.newlin.application.client.OldShit.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Upgrade Gradle wrapper.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FileSystemTest.createFileStructure.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/nicholasnewlin/Documents/Java Projects/File-Server-Program/src/main/resources&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.project.gradle&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/resources" />
@@ -171,7 +174,7 @@
       </method>
     </configuration>
     <configuration name="VolatileExample" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="VolatileExample" />
+      <option name="MAIN_CLASS_NAME" value="com.newlin.test.VolatileExample" />
       <module name="File-Server-Program.test" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -179,8 +182,8 @@
     </configuration>
     <configuration name="FileSystemTest.createFileStructure" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="File-Server-Program.test" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="FileSystemTest" />
+      <option name="PACKAGE_NAME" value="com.newlin.test" />
+      <option name="MAIN_CLASS_NAME" value="com.newlin.test.FileSystemTest" />
       <option name="METHOD_NAME" value="createFileStructure" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
@@ -190,9 +193,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="JUnit.FileSystemTest.createFileStructure" />
-        <item itemvalue="Application.VolatileExample" />
-        <item itemvalue="Application.Client" />
         <item itemvalue="Application.Server" />
+        <item itemvalue="Application.Client" />
+        <item itemvalue="Application.VolatileExample" />
         <item itemvalue="Application.OldClient" />
       </list>
     </recent_temporary>
@@ -278,7 +281,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717032591209</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Implemented new thread safety code using synchronized blocks">
+      <option name="closed" value="true" />
+      <created>1717396370113</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1717396370113</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -300,6 +311,7 @@
     <MESSAGE value="Cleaned up server package and fixed warnings&#10;Restructuring CommandProcessor class" />
     <MESSAGE value="Cleaned up client package and fixed warnings" />
     <MESSAGE value="Assigned ObjectOutputStream first for client and server to allow it to actually work. I spent hours trying to figure that out" />
-    <option name="LAST_COMMIT_MESSAGE" value="Assigned ObjectOutputStream first for client and server to allow it to actually work. I spent hours trying to figure that out" />
+    <MESSAGE value="Implemented new thread safety code using synchronized blocks" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implemented new thread safety code using synchronized blocks" />
   </component>
 </project>

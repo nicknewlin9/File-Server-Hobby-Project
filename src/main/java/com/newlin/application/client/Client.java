@@ -1,8 +1,8 @@
 package com.newlin.application.client;
 
+import com.newlin.util.filesystem.FileNode;
 import com.newlin.util.logger.ConsoleFormatter;
 import com.newlin.util.logger.LogFileFormatter;
-import com.newlin.util.filesystem.FileSystem;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +10,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.file.FileSystemException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -20,7 +24,7 @@ public class Client
 {
     public static Logger logger;
     public static Properties properties = new Properties();
-    public static FileSystem fileSystem;
+    public static FileNode rootFileNode;
     public static ExecutorService executorService;
 
     public static volatile boolean isOnline = false;
@@ -64,7 +68,7 @@ public class Client
         executorService = Executors.newFixedThreadPool(Integer.parseInt(properties.getProperty("client.max.threads")));
 
         logger.fine("Loading file system...");
-        fileSystem = new FileSystem(properties.getProperty("client.filesystem.directory"));
+        loadFileSystem();
 
         commandSlot = new Semaphore(Integer.parseInt(properties.getProperty("server.max.requests")));
 
@@ -143,6 +147,35 @@ public class Client
         catch (IOException exception)
         {
             logger.severe("Can't read config.properties");
+        }
+    }
+
+    private static void loadFileSystem()
+    {
+        try
+        {
+            Path rootPath = Paths.get(properties.getProperty("client.filesystem.directory"));
+
+            if(Files.exists(rootPath) && Files.isDirectory(rootPath))
+            {
+                rootFileNode = FileNode.loadFileStructure(rootPath);
+            }
+            else if(!Files.exists(rootPath))
+            {
+                Files.createDirectory(rootPath);
+            }
+            else if(Files.exists(rootPath) && !Files.isDirectory(rootPath))
+            {
+                throw new FileSystemException("");
+            }
+        }
+        catch(FileSystemException exception)
+        {
+            logger.severe("Specified path to program's root directory is not a directory");
+        }
+        catch(IOException exception)
+        {
+            logger.severe("Exception while creating root directory");
         }
     }
 
