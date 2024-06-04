@@ -5,7 +5,6 @@ import com.newlin.util.command.Command;
 
 import java.util.Scanner;
 
-import static com.newlin.application.client.Client.isOnline;
 import static com.newlin.application.client.Client.logger;
 
 public class UserInputListener implements Runnable
@@ -14,7 +13,7 @@ public class UserInputListener implements Runnable
     {
         try(Scanner scanner = new Scanner(System.in))
         {
-            while(isOnline)
+            while(Client.isOnline)
             {
                 Client.commandSlot.acquire();
                 logger.info("Enter a command: ");

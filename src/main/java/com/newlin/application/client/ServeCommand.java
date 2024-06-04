@@ -21,7 +21,11 @@ public class ServeCommand implements Runnable
             Client.objectOutputStream.writeObject(command);
             Client.objectOutputStream.flush();
             Response receivedResponse = (Response) Client.objectInputStream.readObject();
+
             Client.logger.info(receivedResponse.toString());
+
+            ResponseProcessor responseProcessor = new ResponseProcessor();
+            responseProcessor.submit(receivedResponse);
         }
         catch(ClassNotFoundException exception)
         {

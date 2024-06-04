@@ -44,7 +44,7 @@ public class FileNode implements Serializable
         this.parent = parent;
     }
 
-    protected List<FileNode> getChildren()
+    public List<FileNode> getChildren()
     {
         return this.children;
     }
@@ -55,7 +55,7 @@ public class FileNode implements Serializable
         this.children.add(child);
     }
 
-    protected Path getPath()
+    public Path getPath()
     {
         List<String> pathElements = new ArrayList<>();
         FileNode current = this;
@@ -96,10 +96,15 @@ public class FileNode implements Serializable
 
     public void printChildren()
     {
+        for(int i = 0; i < 64; i++) {System.out.print("_");};
+        System.out.println();
+
+        System.out.println(ConsoleColors.BLUE.getCode() + this.getFileName() + ConsoleColors.RESET.getCode());
         for (FileNode child : getChildren())
         {
-            if (child.getPath().toFile().isDirectory())
+            if (Files.isDirectory(child.getPath()))
             {
+                System.out.print("    ");
                 System.out.println(ConsoleColors.BLUE.getCode() + child.getFileName() + ConsoleColors.RESET.getCode());
             }
             else
@@ -108,11 +113,47 @@ public class FileNode implements Serializable
                 System.out.println(child.getFileName());
             }
         }
+
+        for(int i = 0; i < 64; i++) {System.out.print("_");};
+        System.out.println();
+    }
+
+    public String getChildrenString()
+    {
+        StringBuilder output = new StringBuilder();
+
+        output.append("\n");
+        output.append("_".repeat(64));
+        output.append("\n");
+
+        output.append(ConsoleColors.BLUE.getCode()).append(this.getFileName()).append(ConsoleColors.BRIGHT_WHITE.getCode()).append("\n");
+        for (FileNode child : getChildren())
+        {
+            if (Files.isDirectory(child.getPath()))
+            {
+                output.append("    ").append(ConsoleColors.BLUE.getCode()).append(child.getFileName()).append(ConsoleColors.BRIGHT_WHITE.getCode()).append("\n");
+            }
+            else
+            {
+                output.append("    ").append(child.getFileName()).append("\n");
+            }
+        }
+
+        output.append("_".repeat(64));
+        output.append("\n");
+
+        return output.toString();
     }
 
     public void printNode()
     {
+        for(int i = 0; i < 64; i++) {System.out.print("_");};
+        System.out.println();
+
         printNode(this, 0);
+
+        for(int i = 0; i < 64; i++) {System.out.print("_");};
+        System.out.println();
     }
 
     private void printNode(FileNode node, int level)
@@ -121,7 +162,7 @@ public class FileNode implements Serializable
         {
             System.out.print("    ");
         }
-        if(node.getPath().toFile().isDirectory())
+        if(Files.isDirectory(node.getPath()))
         {
             System.out.println(ConsoleColors.BLUE.getCode() + node.getPath().getFileName() + ConsoleColors.RESET.getCode());
         }
@@ -130,5 +171,35 @@ public class FileNode implements Serializable
             System.out.println(node.getPath().getFileName());
         }
         node.getChildren().forEach(child -> printNode(child, level + 1));
+    }
+
+    @Override
+    public String toString()
+    {
+        return getNodeString(this, 0);
+    }
+
+    public String getPrintable()
+    {
+        return "_".repeat(64) + "\n" + getNodeString(this, 0) + "_".repeat(64);
+    }
+
+    private String getNodeString(FileNode node, int level)
+    {
+        StringBuilder output = new StringBuilder();
+        output.append("    ".repeat(Math.max(0, level)));
+        if (Files.isDirectory(node.getPath()))
+        {
+            output.append(ConsoleColors.BLUE.getCode()).append(node.getPath().getFileName()).append(ConsoleColors.RESET.getCode()).append("\n");
+        }
+        else
+        {
+            output.append(node.getPath().getFileName()).append("\n");
+        }
+        for (FileNode child : node.getChildren())
+        {
+            output.append(getNodeString(child, level + 1));
+        }
+        return output.toString();
     }
 }

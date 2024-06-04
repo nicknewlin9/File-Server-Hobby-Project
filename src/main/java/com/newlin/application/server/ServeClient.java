@@ -36,7 +36,10 @@ public class ServeClient implements Runnable
 
                 Command receivedCommand = (Command) objectInputStream.readObject();
                 Server.logger.info("From " + clientName + ": " + receivedCommand.toString());
-                Response response = new Response(true, receivedCommand);
+
+                CommandProcessor commandProcessor = new CommandProcessor(Server.rootFileNode);
+                Response response = commandProcessor.submit(receivedCommand);
+
                 objectOutputStream.writeObject(response);
                 objectOutputStream.flush();
             }

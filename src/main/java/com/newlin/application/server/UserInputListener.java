@@ -2,7 +2,6 @@ package com.newlin.application.server;
 
 import java.util.Scanner;
 
-import static com.newlin.application.server.Server.isOnline;
 import static com.newlin.application.server.Server.logger;
 
 public class UserInputListener implements Runnable
@@ -11,7 +10,7 @@ public class UserInputListener implements Runnable
     {
         try(Scanner scanner = new Scanner(System.in))
         {
-            while(isOnline)
+            while(Server.isOnline)
             {
                 logger.info("Enter a command: ");
                 String input = scanner.nextLine();
