@@ -39,6 +39,7 @@ public class VolatileExample
     {
         while (!flag)
         {
+            Thread.onSpinWait();
             // Wait until flag becomes true
         }
         System.out.println("Flag is now true!");

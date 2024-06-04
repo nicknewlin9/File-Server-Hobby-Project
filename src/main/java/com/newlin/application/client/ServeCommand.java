@@ -22,10 +22,19 @@ public class ServeCommand implements Runnable
             Client.objectOutputStream.flush();
             Response receivedResponse = (Response) Client.objectInputStream.readObject();
 
-            Client.logger.info(receivedResponse.toString());
+            Client.logger.info(String.valueOf(receivedResponse.success()));
 
             ResponseProcessor responseProcessor = new ResponseProcessor();
             responseProcessor.submit(receivedResponse);
+
+            try
+            {
+                Thread.sleep(500);
+            }
+            catch (InterruptedException exception)
+            {
+                throw new RuntimeException(exception);
+            }
         }
         catch(ClassNotFoundException exception)
         {

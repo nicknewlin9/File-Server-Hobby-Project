@@ -1,8 +1,6 @@
 package com.newlin.test;
 
-import com.newlin.application.client.ResponseProcessor;
 import com.newlin.application.server.CommandProcessor;
-import com.newlin.application.server.Server;
 import com.newlin.util.command.Action;
 import com.newlin.util.command.Command;
 import com.newlin.util.filesystem.FileNode;
@@ -21,26 +19,22 @@ public class FileSystemTest
     public void createFileStructure()
     {
         Properties properties = getProperties();
-
+        assert properties != null;
         Path rootPath = Paths.get(properties.getProperty("server.filesystem.directory"));
         FileNode rootFileNode;
         rootFileNode = FileNode.loadFileStructure(rootPath);
-
-        //rootFileNode.printChildren();
-        //System.out.println("\n\n\n\n\n");
-        //rootFileNode.printNode();
-        //System.out.println("\n\n\n\n\n");
 
         CommandProcessor commandProcessor = new CommandProcessor(rootFileNode);
         Response response = commandProcessor.submit(new Command(Action.LIST, ""));
 
         FileNode node = (FileNode) response.data();
 
-        System.out.println(node.getNodeString());
+        System.out.println(node.getPrintable());
 
+        CommandProcessor commandProcessor1 = new CommandProcessor(rootFileNode);
+        Response response1 = commandProcessor1.submit(new Command(Action.DOWNLOAD, "poopy.txt"));
+        System.out.println(response1.data());
     }
-
-
 
     private static Properties getProperties()
     {
@@ -50,13 +44,12 @@ public class FileSystemTest
             if (input == null)
             {
                 return null;
-                //logger.severe("Can't find config.properties");
             }
             properties.load(input);
         }
         catch (IOException exception)
         {
-            //logger.severe("Can't read config.properties");
+            exception.printStackTrace();
         }
         return properties;
     }

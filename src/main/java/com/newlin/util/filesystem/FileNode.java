@@ -29,7 +29,7 @@ public class FileNode implements Serializable
         return this.fileName;
     }
 
-    protected void setFileName(String fileName)
+    public void setFileName(String fileName)
     {
         this.fileName = fileName;
     }
@@ -94,30 +94,6 @@ public class FileNode implements Serializable
         return node;
     }
 
-    public void printChildren()
-    {
-        for(int i = 0; i < 64; i++) {System.out.print("_");};
-        System.out.println();
-
-        System.out.println(ConsoleColors.BLUE.getCode() + this.getFileName() + ConsoleColors.RESET.getCode());
-        for (FileNode child : getChildren())
-        {
-            if (Files.isDirectory(child.getPath()))
-            {
-                System.out.print("    ");
-                System.out.println(ConsoleColors.BLUE.getCode() + child.getFileName() + ConsoleColors.RESET.getCode());
-            }
-            else
-            {
-                System.out.print("    ");
-                System.out.println(child.getFileName());
-            }
-        }
-
-        for(int i = 0; i < 64; i++) {System.out.print("_");};
-        System.out.println();
-    }
-
     public String getChildrenString()
     {
         StringBuilder output = new StringBuilder();
@@ -145,40 +121,6 @@ public class FileNode implements Serializable
         return output.toString();
     }
 
-    public void printNode()
-    {
-        for(int i = 0; i < 64; i++) {System.out.print("_");};
-        System.out.println();
-
-        printNode(this, 0);
-
-        for(int i = 0; i < 64; i++) {System.out.print("_");};
-        System.out.println();
-    }
-
-    private void printNode(FileNode node, int level)
-    {
-        for(int i = 0; i < level; i++)
-        {
-            System.out.print("    ");
-        }
-        if(Files.isDirectory(node.getPath()))
-        {
-            System.out.println(ConsoleColors.BLUE.getCode() + node.getPath().getFileName() + ConsoleColors.RESET.getCode());
-        }
-        else
-        {
-            System.out.println(node.getPath().getFileName());
-        }
-        node.getChildren().forEach(child -> printNode(child, level + 1));
-    }
-
-    @Override
-    public String toString()
-    {
-        return getNodeString(this, 0);
-    }
-
     public String getPrintable()
     {
         return "_".repeat(64) + "\n" + getNodeString(this, 0) + "_".repeat(64);
@@ -201,5 +143,11 @@ public class FileNode implements Serializable
             output.append(getNodeString(child, level + 1));
         }
         return output.toString();
+    }
+
+    @Override
+    public String toString()
+    {
+        return getNodeString(this, 0);
     }
 }

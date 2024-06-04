@@ -46,14 +46,7 @@ public class CommandProcessor
     private Response list(Command command)
     {
         String directory =  node.getPath() + "/" + command.args()[0];
-        if(directory.equals(""))
-        {
-            return new Response(true, node);
-        }
-        else
-        {
-            return new Response(true, findFileNodeByName(node, directory));
-        }
+        return new Response(true, findFileNodeByName(node, directory));
     }
 
     private Response delete(Command command)

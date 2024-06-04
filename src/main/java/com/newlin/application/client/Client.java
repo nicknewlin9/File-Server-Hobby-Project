@@ -70,7 +70,7 @@ public class Client
         logger.fine("Loading file system...");
         loadFileSystem();
 
-        commandSlot = new Semaphore(Integer.parseInt(properties.getProperty("server.max.requests")));
+        commandSlot = new Semaphore(1);
 
         connect();
     }
