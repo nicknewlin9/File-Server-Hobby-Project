@@ -11,11 +11,11 @@ import java.util.List;
 
 public class CommandProcessor
 {
-    public FileNode node;
+    public FileNode rootNode;
 
-    public CommandProcessor(FileNode node)
+    public CommandProcessor(FileNode rootNode)
     {
-        this.node = node;
+        this.rootNode = rootNode;
     }
 
     public Response submit(Command command)
@@ -45,8 +45,9 @@ public class CommandProcessor
 
     private Response list(Command command)
     {
-        String directory =  node.getPath() + "/" + command.args()[0];
-        return new Response(true, findFileNodeByName(node, directory));
+        String directory =  rootNode.getPath() + "/" + command.args()[0];
+
+        return new Response(true, findFileNodeByName(directory));
     }
 
     private Response delete(Command command)
@@ -69,13 +70,9 @@ public class CommandProcessor
         return new Response(true, command);
     }
 
-    public static FileNode findFileNodeByName(FileNode root, String searchFileName)
+    public FileNode findFileNodeByName(String searchFileName)
     {
-        if (root == null)
-        {
-            return null;
-        }
-        return searchTreeByPath(root, Paths.get(searchFileName));
+        return searchTreeByPath(rootNode, Paths.get(searchFileName));
     }
 
     private static FileNode searchTreeByPath(FileNode currentNode, Path path)

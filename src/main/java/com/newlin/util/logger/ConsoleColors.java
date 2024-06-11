@@ -35,4 +35,12 @@ public enum ConsoleColors
     {
         return this.code;
     }
+
+    public static void printColors()
+    {
+        for(ConsoleColors color : ConsoleColors.values())
+        {
+            System.out.println(color.getCode() + color + ConsoleColors.RESET.getCode());
+        }
+    }
 }

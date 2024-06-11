@@ -4,15 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Added CommandProcessor and ResponseProcessor">
+    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Fixed all warnings, program operates correctly, only the list command works">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileSystem.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/com/newlin/test/SendingFileTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ServeCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ServeCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ResponseProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ResponseProcessor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/CommandProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/CommandProcessor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileNode.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/logger/ConsoleColors.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/logger/ConsoleColors.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/newlin/test/FileSystemTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/newlin/test/FileSystemTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/newlin/test/ListCommandTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/newlin/test/VolatileExample.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/newlin/test/VolatileExample.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +80,9 @@
     &quot;accountId&quot;: &quot;7c6e9309-b4f9-4817-9941-ea43b41e1f4d&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="jar://$USER_HOME$/Library/Java/JavaVirtualMachines/openjdk-22/Contents/Home/lib/src.zip!/java.base/java/lang/String.java" root0="SKIP_INSPECTION" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 3
 }</component>
@@ -90,33 +95,37 @@
     <option name="sortByType" value="true" />
     <option name="sortKey" value="BY_TYPE" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Application.App.executor": "Run",
-    "Application.Client.executor": "Run",
-    "Application.GUI.executor": "Run",
-    "Application.LoggingExample.executor": "Run",
-    "Application.OldShit.executor": "Run",
-    "Application.Server.executor": "Run",
-    "Application.Test (1).executor": "Run",
-    "Application.Test.executor": "Run",
-    "Application.VolatileExample.executor": "Run",
-    "Application.com.newlin.application.client.OldShit.executor": "Run",
-    "Gradle.Upgrade Gradle wrapper.executor": "Run",
-    "JUnit.FileSystemTest.createFileStructure.executor": "Run",
-    "JUnit.FileSystemTest.executor": "Run",
-    "JUnit.ListCommandTest.bitch.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/nicholasnewlin/Documents/Java Projects/File-Server-Program/remote/logs",
-    "project.structure.last.edited": "Modules",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "reference.settingsdialog.project.gradle"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Application.App.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Client.executor&quot;: &quot;Run&quot;,
+    &quot;Application.GUI.executor&quot;: &quot;Run&quot;,
+    &quot;Application.LoggingExample.executor&quot;: &quot;Run&quot;,
+    &quot;Application.OldShit.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Server.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Test (1).executor&quot;: &quot;Run&quot;,
+    &quot;Application.Test.executor&quot;: &quot;Run&quot;,
+    &quot;Application.VolatileExample.executor&quot;: &quot;Run&quot;,
+    &quot;Application.com.newlin.application.client.OldShit.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Upgrade Gradle wrapper.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FileSystemTest.Client.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FileSystemTest.Server.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FileSystemTest.StringTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FileSystemTest.createFileStructure.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.FileSystemTest.executor&quot;: &quot;Debug&quot;,
+    &quot;JUnit.FileSystemTest.fileTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.ListCommandTest.bitch.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/nicholasnewlin/Documents/Java Projects/File-Server-Program/remote/logs&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.testRunning&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/remote/logs" />
@@ -131,20 +140,7 @@
       <recent name="com.newlin.application.client" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Client">
-    <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.newlin.application.client.Client" />
-      <module name="File-Server-Program.main" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.newlin.application.client.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.FileSystemTest.createFileStructure">
     <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.newlin.application.server.Server" />
       <module name="File-Server-Program.main" />
@@ -158,20 +154,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="VolatileExample" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="com.newlin.test.VolatileExample" />
-      <module name="File-Server-Program.test" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.newlin.test.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="FileSystemTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="FileSystemTest.Client" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="File-Server-Program.test" />
       <extension name="coverage">
         <pattern>
@@ -181,13 +164,36 @@
       </extension>
       <option name="PACKAGE_NAME" value="com.newlin.test" />
       <option name="MAIN_CLASS_NAME" value="com.newlin.test.FileSystemTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="METHOD_NAME" value="Client" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FileSystemTest.Server" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="File-Server-Program.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.newlin.test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.newlin.test" />
+      <option name="MAIN_CLASS_NAME" value="com.newlin.test.FileSystemTest" />
+      <option name="METHOD_NAME" value="Server" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <configuration name="FileSystemTest.createFileStructure" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="File-Server-Program.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.newlin.test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
       <option name="PACKAGE_NAME" value="com.newlin.test" />
       <option name="MAIN_CLASS_NAME" value="com.newlin.test.FileSystemTest" />
       <option name="METHOD_NAME" value="createFileStructure" />
@@ -196,13 +202,29 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="FileSystemTest.fileTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="File-Server-Program.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.newlin.test.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.newlin.test" />
+      <option name="MAIN_CLASS_NAME" value="com.newlin.test.FileSystemTest" />
+      <option name="METHOD_NAME" value="fileTest" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Client" />
-        <item itemvalue="Application.Server" />
         <item itemvalue="JUnit.FileSystemTest.createFileStructure" />
-        <item itemvalue="Application.VolatileExample" />
-        <item itemvalue="JUnit.FileSystemTest" />
+        <item itemvalue="Application.Server" />
+        <item itemvalue="JUnit.FileSystemTest.fileTest" />
+        <item itemvalue="JUnit.FileSystemTest.Client" />
+        <item itemvalue="JUnit.FileSystemTest.Server" />
       </list>
     </recent_temporary>
   </component>
@@ -311,7 +333,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717483625304</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Fixed all warnings, program operates correctly, only the list command works">
+      <option name="closed" value="true" />
+      <created>1717486333338</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1717486333338</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -336,6 +366,7 @@
     <MESSAGE value="Implemented new thread safety code using synchronized blocks" />
     <MESSAGE value="Reworked FileNode with much better organization and encapsulation&#10;Added loadFileSystem methods to Client and Server to correctly create the file tree structure based on the directory provided in config.properties" />
     <MESSAGE value="Added CommandProcessor and ResponseProcessor" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added CommandProcessor and ResponseProcessor" />
+    <MESSAGE value="Fixed all warnings, program operates correctly, only the list command works" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed all warnings, program operates correctly, only the list command works" />
   </component>
 </project>

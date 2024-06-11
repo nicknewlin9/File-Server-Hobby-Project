@@ -13,7 +13,7 @@ public class ResponseProcessor
         {
             switch(response.data())
             {
-                case FileNode node -> logger.info(node.getChildrenString());
+                case FileNode node -> System.out.println(node.getChildrenString());
                 case String message -> logger.info("Server returned: " + message);
                 default -> logger.severe("Received invalid response from server");
             }
