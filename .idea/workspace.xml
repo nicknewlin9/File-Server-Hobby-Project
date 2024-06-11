@@ -4,15 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Fixed all warnings, program operates correctly, only the list command works">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileSystem.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/newlin/test/SendingFileTest.java" afterDir="false" />
+    <list default="true" id="46956cbc-8b79-45c9-a47d-306075cc0c63" name="Changes" comment="Fully documented FileNode class with Javadocs&#10;Properly implemented several toString methods for FileNode class&#10;Added printColors method to ConsoleColors to print all the colors in the console">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ResponseProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/client/ResponseProcessor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/CommandProcessor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/application/server/CommandProcessor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileNode.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/filesystem/FileNode.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/newlin/util/logger/ConsoleColors.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/newlin/util/logger/ConsoleColors.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/com/newlin/test/FileSystemTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/newlin/test/FileSystemTest.java" afterDir="false" />
     </list>
@@ -341,7 +335,15 @@
       <option name="project" value="LOCAL" />
       <updated>1717486333338</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Fully documented FileNode class with Javadocs&#10;Properly implemented several toString methods for FileNode class&#10;Added printColors method to ConsoleColors to print all the colors in the console">
+      <option name="closed" value="true" />
+      <created>1718068283131</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1718068283131</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -367,6 +369,7 @@
     <MESSAGE value="Reworked FileNode with much better organization and encapsulation&#10;Added loadFileSystem methods to Client and Server to correctly create the file tree structure based on the directory provided in config.properties" />
     <MESSAGE value="Added CommandProcessor and ResponseProcessor" />
     <MESSAGE value="Fixed all warnings, program operates correctly, only the list command works" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed all warnings, program operates correctly, only the list command works" />
+    <MESSAGE value="Fully documented FileNode class with Javadocs&#10;Properly implemented several toString methods for FileNode class&#10;Added printColors method to ConsoleColors to print all the colors in the console" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fully documented FileNode class with Javadocs&#10;Properly implemented several toString methods for FileNode class&#10;Added printColors method to ConsoleColors to print all the colors in the console" />
   </component>
 </project>

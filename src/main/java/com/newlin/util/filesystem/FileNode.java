@@ -185,18 +185,13 @@ public class FileNode implements Serializable
 
     /**
      * Builds a {@code String} that represents this {@code FileNode} and all of its descendant {@code children}.
-     * @param node the {@code FileNode} to convert.
      * @return a {@code String} that represents this {@code FileNode}.
      */
-    public String getNodeString(FileNode node)
+    public String getNodeString()
     {
-        StringBuilder output = new StringBuilder();
-
-        output.append("=".repeat(64)).append("\n");
-        output.append(getNodeString(node,0));
-        output.append("=".repeat(64)).append("\n");
-
-        return output.toString();
+        return "=".repeat(64) + "\n" +
+                getNodeString(this, 0) +
+                "=".repeat(64) + "\n";
     }
 
     /**
@@ -214,16 +209,16 @@ public class FileNode implements Serializable
         {
             if(level == 0)
             {
-                output.append("[").append(node.getPath().getFileName()).append("]").append("\n");
+                output.append("[").append(node.getFileName()).append("]").append("\n");
             }
             else
             {
-                output.append("<> [").append(node.getPath().getFileName()).append("]").append("\n");
+                output.append("<> [").append(node.getFileName()).append("]").append("\n");
             }
         }
         else
         {
-            output.append(" > ").append(node.getPath().getFileName()).append("\n");
+            output.append(" > ").append(node.getFileName()).append("\n");
         }
 
         List<FileNode> directories = new ArrayList<>();
@@ -260,6 +255,83 @@ public class FileNode implements Serializable
     }
 
     /**
+     * Builds a console-friendly {@code String} that represents this {@code FileNode} and all of its descendant {@code children}.
+     * <p>
+     * The files and directories are color coded with ANSI escape codes as listed in
+     * {@code com.newlin.util.logger.ConsoleColors}.
+     * @return a {@code String} that represents this {@code FileNode}.
+     */
+    public String getNodeStringForConsole()
+    {
+        return ConsoleColors.BRIGHT_WHITE.getCode() + "=".repeat(64) + ConsoleColors.RESET.getCode() + "\n" +
+                getNodeStringForConsole(this, 0) +
+                ConsoleColors.BRIGHT_WHITE.getCode() + "=".repeat(64) + ConsoleColors.RESET.getCode() + "\n";
+    }
+
+    /**
+     * Private utility method that builds a console-friendly {@code String} that represents this {@code FileNode} and
+     * recursively adds all descendant {@code children}.
+     * <p>
+     * The files and directories are color coded with ANSI escape codes as listed in
+     * {@code com.newlin.util.logger.ConsoleColors}.
+     * @param node the {@code FileNode} to convert.
+     * @param level the depth of the {@code FileNode} in the file system (root node has level 0).
+     * @return a {@code String} that represents this {@code FileNode}.
+     */
+    private String getNodeStringForConsole(FileNode node, int level)
+    {
+        StringBuilder output = new StringBuilder();
+        output.append("   ".repeat(Math.max(0, level)));
+        if (node.isDirectory())
+        {
+            if(level == 0)
+            {
+                output.append(ConsoleColors.BRIGHT_BLUE.getCode()).append("[").append(node.getFileName()).append("]").append(ConsoleColors.RESET.getCode()).append("\n");
+            }
+            else
+            {
+                output.append(ConsoleColors.BRIGHT_BLUE.getCode()).append("<> [").append(node.getFileName()).append("]").append(ConsoleColors.RESET.getCode()).append("\n");
+            }
+        }
+        else
+        {
+            output.append(ConsoleColors.BRIGHT_WHITE.getCode()).append(" > ").append(node.getFileName()).append(ConsoleColors.RESET.getCode()).append("\n");
+        }
+
+        List<FileNode> directories = new ArrayList<>();
+        List<FileNode> files = new ArrayList<>();
+        for (FileNode child : node.getChildren())
+        {
+            if (child.isDirectory())
+            {
+                directories.add(child);
+            }
+            else
+            {
+                files.add(child);
+            }
+        }
+
+        files = files.stream()
+                .sorted((f1, f2) -> f1.getFileName().compareToIgnoreCase(f2.getFileName()))
+                .collect(Collectors.toList());
+
+        directories = directories.stream()
+                .sorted((d1, d2) -> d1.getFileName().compareToIgnoreCase(d2.getFileName()))
+                .collect(Collectors.toList());
+
+        for (FileNode file : files)
+        {
+            output.append(getNodeStringForConsole(file, level + 1));
+        }
+        for (FileNode directory : directories)
+        {
+            output.append(getNodeStringForConsole(directory, level + 1));
+        }
+        return output.toString();
+    }
+
+    /**
      * Builds a {@code String} that represents this {@code FileNode} and its direct {@code children}.
      * @return the {@code String} that represents this {@code FileNode} and only its direct children.
      */
@@ -271,11 +343,11 @@ public class FileNode implements Serializable
 
         if (isDirectory())
         {
-            output.append("[").append(getPath().getFileName()).append("]").append("\n");
+            output.append("[").append(getFileName()).append("]").append("\n");
         }
         else
         {
-            output.append(" > ").append(getPath().getFileName()).append("\n");
+            output.append(" > ").append(getFileName()).append("\n");
         }
 
         List<FileNode> directories = new ArrayList<>();
@@ -302,11 +374,11 @@ public class FileNode implements Serializable
 
         for (FileNode directory : directories)
         {
-            output.append("    ").append("<> [").append(directory.getPath().getFileName()).append("]").append("\n");
+            output.append("    ").append("<> [").append(directory.getFileName()).append("]").append("\n");
         }
         for (FileNode file : files)
         {
-            output.append("    ").append(" > ").append(file.getPath().getFileName()).append("\n");
+            output.append("    ").append(" > ").append(file.getFileName()).append("\n");
         }
 
         output.append("=".repeat(64)).append("\n");
@@ -324,15 +396,15 @@ public class FileNode implements Serializable
     {
         StringBuilder output = new StringBuilder();
 
-        output.append("=".repeat(64)).append("\n");
+        output.append(ConsoleColors.BRIGHT_WHITE.getCode()).append("=".repeat(64)).append(ConsoleColors.RESET.getCode()).append("\n");
 
         if (isDirectory())
         {
-            output.append("[").append(getPath().getFileName()).append("]").append("\n");
+            output.append(ConsoleColors.BRIGHT_BLUE.getCode()).append("[").append(getFileName()).append("]").append(ConsoleColors.RESET.getCode()).append("\n");
         }
         else
         {
-            output.append(" > ").append(getPath().getFileName()).append("\n");
+            output.append(" > ").append(getFileName()).append("\n");
         }
 
         List<FileNode> directories = new ArrayList<>();
@@ -359,14 +431,14 @@ public class FileNode implements Serializable
 
         for (FileNode directory : directories)
         {
-            output.append("    ").append("<> [").append(directory.getPath().getFileName()).append("]").append("\n");
+            output.append("    ").append(ConsoleColors.BRIGHT_BLUE.getCode()).append("<> [").append(directory.getFileName()).append("]").append(ConsoleColors.RESET.getCode()).append("\n");
         }
         for (FileNode file : files)
         {
-            output.append("    ").append(" > ").append(file.getPath().getFileName()).append("\n");
+            output.append("    ").append(ConsoleColors.BRIGHT_WHITE.getCode()).append(" > ").append(file.getFileName()).append(ConsoleColors.RESET.getCode()).append("\n");
         }
 
-        output.append("=".repeat(64)).append("\n");
+        output.append(ConsoleColors.BRIGHT_WHITE.getCode()).append("=".repeat(64)).append(ConsoleColors.RESET.getCode()).append("\n");
         return output.toString();
     }
 
@@ -376,6 +448,6 @@ public class FileNode implements Serializable
     @Override
     public String toString()
     {
-        return getNodeString(this);
+        return getNodeString();
     }
 }
