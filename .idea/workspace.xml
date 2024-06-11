@@ -140,7 +140,7 @@
       <module name="File-Server-Program.main" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.newlin.application.server.*" />
+          <option name="PATTERN" value="com.newlin.util.filesystem.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>

@@ -204,53 +204,21 @@ public class FileNode implements Serializable
     private String getNodeString(FileNode node, int level)
     {
         StringBuilder output = new StringBuilder();
-        output.append("   ".repeat(Math.max(0, level)));
-        if (node.isDirectory())
-        {
-            if(level == 0)
-            {
-                output.append("[").append(node.getFileName()).append("]").append("\n");
-            }
-            else
-            {
-                output.append("<> [").append(node.getFileName()).append("]").append("\n");
-            }
-        }
-        else
-        {
-            output.append(" > ").append(node.getFileName()).append("\n");
-        }
+        String indentation = "   ".repeat(Math.max(0, level));
+        String prefix = node.isDirectory() ? (level == 0 ? "[" : "<> [") : " > ";
+        output.append(indentation).append(prefix).append(node.getFileName()).append(node.isDirectory() ? "]" : "").append("\n");
 
-        List<FileNode> directories = new ArrayList<>();
-        List<FileNode> files = new ArrayList<>();
-        for (FileNode child : node.getChildren())
-        {
-            if (child.isDirectory())
-            {
-                directories.add(child);
-            }
-            else
-            {
-                files.add(child);
-            }
-        }
+        node.getChildren().stream()
+                .sorted((a, b) ->
+                {
+                    if (a.isDirectory() == b.isDirectory())
+                    {
+                        return a.getFileName().compareToIgnoreCase(b.getFileName());
+                    }
+                    return a.isDirectory() ? 1 : -1;
+                })
+                .forEach(child -> output.append(getNodeString(child, level + 1)));
 
-        files = files.stream()
-                .sorted((f1, f2) -> f1.getFileName().compareToIgnoreCase(f2.getFileName()))
-                .collect(Collectors.toList());
-
-        directories = directories.stream()
-                .sorted((d1, d2) -> d1.getFileName().compareToIgnoreCase(d2.getFileName()))
-                .collect(Collectors.toList());
-
-        for (FileNode file : files)
-        {
-            output.append(getNodeString(file, level + 1));
-        }
-        for (FileNode directory : directories)
-        {
-            output.append(getNodeString(directory, level + 1));
-        }
         return output.toString();
     }
 
@@ -281,53 +249,28 @@ public class FileNode implements Serializable
     private String getNodeStringForConsole(FileNode node, int level)
     {
         StringBuilder output = new StringBuilder();
-        output.append("   ".repeat(Math.max(0, level)));
-        if (node.isDirectory())
-        {
-            if(level == 0)
-            {
-                output.append(ConsoleColors.BRIGHT_BLUE.getCode()).append("[").append(node.getFileName()).append("]").append(ConsoleColors.RESET.getCode()).append("\n");
-            }
-            else
-            {
-                output.append(ConsoleColors.BRIGHT_BLUE.getCode()).append("<> [").append(node.getFileName()).append("]").append(ConsoleColors.RESET.getCode()).append("\n");
-            }
-        }
-        else
-        {
-            output.append(ConsoleColors.BRIGHT_WHITE.getCode()).append(" > ").append(node.getFileName()).append(ConsoleColors.RESET.getCode()).append("\n");
-        }
+        String indentation = "   ".repeat(Math.max(0, level));
+        String colorCode = node.isDirectory() ? ConsoleColors.BRIGHT_BLUE.getCode() : ConsoleColors.BRIGHT_WHITE.getCode();
+        String prefix = node.isDirectory() ? (level == 0 ? "[" : "<> [") : " > ";
+        output.append(indentation)
+                .append(colorCode)
+                .append(prefix)
+                .append(node.getFileName())
+                .append(node.isDirectory() ? "]" : "")
+                .append(ConsoleColors.RESET.getCode())
+                .append("\n");
 
-        List<FileNode> directories = new ArrayList<>();
-        List<FileNode> files = new ArrayList<>();
-        for (FileNode child : node.getChildren())
-        {
-            if (child.isDirectory())
-            {
-                directories.add(child);
-            }
-            else
-            {
-                files.add(child);
-            }
-        }
+        node.getChildren().stream()
+                .sorted((a, b) ->
+                {
+                    if (a.isDirectory() == b.isDirectory())
+                    {
+                        return a.getFileName().compareToIgnoreCase(b.getFileName());
+                    }
+                    return a.isDirectory() ? 1 : -1;
+                })
+                .forEach(child -> output.append(getNodeStringForConsole(child, level + 1)));
 
-        files = files.stream()
-                .sorted((f1, f2) -> f1.getFileName().compareToIgnoreCase(f2.getFileName()))
-                .collect(Collectors.toList());
-
-        directories = directories.stream()
-                .sorted((d1, d2) -> d1.getFileName().compareToIgnoreCase(d2.getFileName()))
-                .collect(Collectors.toList());
-
-        for (FileNode file : files)
-        {
-            output.append(getNodeStringForConsole(file, level + 1));
-        }
-        for (FileNode directory : directories)
-        {
-            output.append(getNodeStringForConsole(directory, level + 1));
-        }
         return output.toString();
     }
 

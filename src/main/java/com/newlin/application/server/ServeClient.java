@@ -1,6 +1,7 @@
 package com.newlin.application.server;
 
 import com.newlin.util.command.Command;
+import com.newlin.util.filesystem.FileSystem;
 import com.newlin.util.response.Response;
 
 import java.io.IOException;
@@ -37,7 +38,7 @@ public class ServeClient implements Runnable
                 Command receivedCommand = (Command) objectInputStream.readObject();
                 Server.logger.info("From " + clientName + ": " + receivedCommand.toString());
 
-                CommandProcessor commandProcessor = new CommandProcessor(Server.rootFileNode);
+                FileSystem commandProcessor = new FileSystem(Server.rootFileNode);
                 Response response = commandProcessor.submit(receivedCommand);
 
                 objectOutputStream.writeObject(response);

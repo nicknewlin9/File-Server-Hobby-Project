@@ -1,6 +1,6 @@
 package com.newlin.test;
 
-import com.newlin.application.server.CommandProcessor;
+import com.newlin.util.filesystem.FileSystem;
 import com.newlin.util.command.Action;
 import com.newlin.util.command.Command;
 import com.newlin.util.filesystem.FileNode;
@@ -23,7 +23,7 @@ public class FileSystemTest
         FileNode rootFileNode;
         rootFileNode = FileNode.loadFileStructure(rootPath);
 
-        CommandProcessor commandProcessor = new CommandProcessor(rootFileNode);
+        FileSystem commandProcessor = new FileSystem(rootFileNode);
         Response response = commandProcessor.submit(new Command(Action.LIST, ""));
 
         FileNode node = (FileNode) response.data();
